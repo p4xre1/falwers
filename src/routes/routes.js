@@ -28,6 +28,7 @@ export const ROUTES = [
   { path: '/size-guide',     page: 'sizeguide', file: 'size-guide.html', priority: 0.5, changefreq: 'monthly', public: true },
   { path: '/offers',         page: 'offers',    file: 'offers.html',   priority: 0.6, changefreq: 'weekly',  public: true },
   { path: '/search',         page: 'search',    file: 'search.html',   priority: 0.2, changefreq: 'monthly', public: false },
+  { path: '/ai',             page: 'ai',        file: 'ai.html',       priority: 0.4, changefreq: 'monthly', public: true },
   { path: '/privacy',        page: 'privacy',   file: 'privacy.html',  priority: 0.3, changefreq: 'monthly', public: true },
   { path: '/terms',          page: 'terms',     file: 'terms.html',    priority: 0.3, changefreq: 'monthly', public: true },
   { path: '/product',        page: 'product',   file: 'product.html',  priority: 0.9, changefreq: 'weekly',  public: true, template: true },

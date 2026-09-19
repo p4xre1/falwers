@@ -480,6 +480,7 @@ function renderChrome(active) {
       + '<a href="blog.html">' + t('nav_blog') + '</a>'
       + '<a href="' + LINKS.about + '">' + t('nav_about') + '</a>'
       + '<a href="search.html">' + t('search_t') + '</a>'
+      + '<a href="ai.html">' + t('aip_t') + '</a>'
       + '</div>'
       + '<div class="foot-links"><span class="t">' + t('foot_contact_t') + '</span>'
       + '<a href="https://wa.me/' + sanitizeDigits(S.settings.whatsapp, 16) + '" target="_blank" rel="noopener noreferrer" style="direction:ltr">+' + sanitizeDigits(S.settings.whatsapp, 16) + '</a>'

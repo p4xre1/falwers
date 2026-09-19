@@ -21,6 +21,7 @@ const ADMIN_PAGES = [
   { id: 'faq',       href: 'faq.html',       key: 'faqadm_t' },
   { id: 'plugins',   href: 'plugins.html',   key: 'plg_t' },
   { id: 'mcp',       href: 'mcp.html',       key: 'mcp_t' },
+  { id: 'aiseo',     href: 'ai-seo.html',    key: 'aip_t' },
   { id: 'settings',  href: 'settings.html',  key: 'tab_settings' }
 ];
 
@@ -828,6 +829,7 @@ const PAGE_INIT = {
   faq: pageFaqAdmin,
   plugins: pagePluginsAdmin,
   mcp: pageMcpAdmin,
+  aiseo: pageAiSeo,
   settings: pageSettings
 };
 /* ============================================================
@@ -1081,6 +1083,39 @@ function pageMcpAdmin() {
     [['https://rosebymarry.com/mcp.json', 'MCP catalog'], ['https://rosebymarry.com/ai-plugin.json', 'AI plugin manifest'], ['https://rosebymarry.com/llms.txt', 'llms.txt'], ['https://rosebymarry.com/ai.txt', 'ai.txt'], ['https://rosebymarry.com/sitemap.xml', 'sitemap']].forEach(pair => {
       eps.append(el('div', { class: 'seo-row ok' }, el('span', {}, pair[1]), el('a', { href: pair[0], target: '_blank', rel: 'noopener noreferrer', class: 'bl-st on' }, pair[0].replace('https://rosebymarry.com', ''))));
     });
+  }
+}
+
+/* ============================================================
+   PAGE: aiseo (published AI/SEO discovery files)
+   Read-only index. Paths mirror scripts/{generate-llms-enhanced,optimize-ai-seo}.mjs
+   and the public /ai page — keep the three in sync when a file is added.
+   ============================================================ */
+const AI_SEO_FILES = [
+  { path: '/llms.txt', label: 'llms.txt', note: { ar: 'فهرس مختصر لكل الصفحات والمنتجات', fr: 'Index concis des pages et produits', en: 'Concise index of pages and products' } },
+  { path: '/llms-full.txt', label: 'llms-full.txt', note: { ar: 'المرجع الكامل بثلاث لغات', fr: 'Référence complète trilingue', en: 'Full trilingual reference' } },
+  { path: '/ai.txt', label: 'ai.txt', note: { ar: 'سياسة الاستخدام والإسناد', fr: 'Politique d’usage et attribution', en: 'Usage policy and attribution' } },
+  { path: '/robots.txt', label: 'robots.txt', note: { ar: 'سماح لأكثر من 20 زاحفاً + الخرائط', fr: '20+ crawlers autorisés + plans', en: '20+ crawlers allowed + sitemaps' } },
+  { path: '/sitemap.xml', label: 'sitemap.xml', note: { ar: 'كل المسارات العامة والمنتجات', fr: 'Toutes les routes et produits', en: 'All public routes and products' } },
+  { path: '/ai-sitemap.xml', label: 'ai-sitemap.xml', note: { ar: 'قائمة قراءة قصيرة للذكاء الاصطناعي', fr: 'Liste de lecture courte pour l’IA', en: 'Short AI reading list' } },
+  { path: '/.well-known/ai-plugin.json', label: 'ai-plugin.json', note: { ar: 'مانيفست ChatGPT', fr: 'Manifeste ChatGPT', en: 'ChatGPT manifest' } },
+  { path: '/.well-known/openapi.json', label: 'openapi.json', note: { ar: 'وصف OpenAPI للقراءة فقط', fr: 'Description OpenAPI en lecture seule', en: 'Read-only OpenAPI description' } },
+  { path: '/mcp.json', label: 'mcp.json', note: { ar: 'كتالوج MCP للمساعدات الذكية', fr: 'Catalogue MCP pour assistants IA', en: 'MCP catalog for AI assistants' } },
+  { path: '/ai', label: '/ai', note: { ar: 'الصفحة العامة التي تعرض هذه الملفات', fr: 'La page publique listant ces fichiers', en: 'The public page listing these files' } }
+];
+function pageAiSeo() {
+  const box = $('#aiSeoList');
+  if (!box) return;
+  box.textContent = '';
+  const base = (S.settings.siteUrl || '').replace(/\/$/, '');
+  for (const f of AI_SEO_FILES) {
+    /* relative href keeps it working on localhost, staging and the live domain alike */
+    const href = '..' + (f.path === '/ai' ? '/ai.html' : f.path);
+    box.append(el('div', { class: 'seo-row ok' },
+      el('span', {}, el('b', { style: { fontFamily: 'monospace', background: 'none', width: 'auto', height: 'auto', display: 'inline', color: 'inherit' } }, f.label),
+        el('span', { class: 'hintline', style: { display: 'block' } }, (f.note[lang] || f.note.en))),
+      el('a', { href, target: '_blank', rel: 'noopener noreferrer', class: 'bl-st on', title: base ? base + f.path : f.path }, t('aip_open'))
+    ));
   }
 }
 

@@ -36,7 +36,7 @@ for (const pg of ['plugins.html', 'mcp.html']) {
   const { d, errs } = adminDom(pg);
   await sleep(900);
   A(pg + ': renders unlocked', !d.body.classList.contains('gated'));
-  A(pg + ': 14 nav tabs', d.querySelectorAll('#adSide .ad-tab').length === 14);
+  A(pg + ': 15 nav tabs', d.querySelectorAll('#adSide .ad-tab').length === 15);
   A(pg + ': zero inline scripts', !Array.from(d.querySelectorAll('script')).some(s => !s.src && s.textContent.trim()));
   A(pg + ': no runtime errors', errs.length === 0);
 }
@@ -161,7 +161,7 @@ for (const pg of ['plugins.html', 'mcp.html']) {
 {
   const { d } = adminDom('index.html');
   await sleep(900);
-  A('index: 14 tabs', d.querySelectorAll('#adSide .ad-tab').length === 14);
+  A('index: 15 tabs', d.querySelectorAll('#adSide .ad-tab').length === 15);
 }
 
 console.log('\nplugins-mcp: ' + pass + ' pass / ' + fail + ' fail');

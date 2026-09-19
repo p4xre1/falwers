@@ -1,2 +1,10 @@
 # Cloudflare Pages redirects — canonical home URL
 /index.html / 301
+
+# AI manifests — safety net.
+# Older Wrangler (v2) silently drops dot-directories when uploading, which would
+# 404 /.well-known/*. These proxy rules (200 = rewrite, not redirect) serve the
+# identical root copies instead, so ChatGPT's probe works either way.
+# Harmless when the real .well-known files do upload: assets win over _redirects.
+/.well-known/ai-plugin.json /ai-plugin.json 200
+/.well-known/openapi.json /openapi.json 200

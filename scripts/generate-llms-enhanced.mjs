@@ -4,6 +4,11 @@
  *   public/llms.txt        concise index (llms.txt convention)
  *   public/llms-full.txt   full trilingual content: catalog, pricing, policies, FAQ
  *   public/ai.txt          AI-crawler policy + quick facts
+ *
+ * Every FACT (colors, prices, fees, phone, tiers) is read from the live catalog in
+ * public/assets/js/data.js. Every SENTENCE lives in src/content/ai-copy.js. Nothing
+ * is hardcoded here, so re-running can never downgrade the published files.
+ *
  * Usage: node scripts/generate-llms-enhanced.mjs   (env SITE_URL to override domain)
  */
 import fs from 'node:fs';
@@ -12,6 +17,10 @@ import { loadCatalog, ROOT } from './load-catalog.mjs';
 import { SITE, ROUTES, productRoutes } from '../src/routes/routes.js';
 import { PAGES } from '../src/pages/index.js';
 import { productCard } from '../src/components/product-card.js';
+import {
+  LLMS_PAGE_ORDER, PAGE_COPY, PRODUCT_BLURBS, POLICIES,
+  BUSINESS, FULL_FAQ, SITE_SECTIONS, SHORT_FAQ_AR, AI_POLICY
+} from '../src/content/ai-copy.js';
 
 const { S } = loadCatalog();
 const site = { ...SITE, url: (process.env.SITE_URL || SITE.url).replace(/\/$/, '') };
@@ -20,8 +29,38 @@ const prodRoutes = productRoutes(products);
 const today = new Date().toISOString().slice(0, 10);
 const money = n => `${n} MAD`;
 
+/* ---------------- live facts derived from the real catalog ---------------- */
+const tierQtys = S.builderTiers.map(t => t.qty).sort((a, b) => a - b);
+const buildableQtys = tierQtys.filter(q => q >= 5);
+const prices = products.map(p => p.price).filter(n => Number.isFinite(n)).sort((a, b) => a - b);
+const wa = String(S.settings.whatsapp || '');
+const F = {
+  url: site.url,
+  whatsapp: wa,
+  /* +212 772-966980 — readable form used in prose */
+  waPretty: `+${wa.slice(0, 3)} ${wa.slice(3, 6)}-${wa.slice(6)}`,
+  freeShip: S.settings.freeShip,
+  unit: S.settings.builderUnit,
+  fee: S.zones[0]?.fee ?? 20,
+  builderMin: buildableQtys[0] ?? 5,
+  builderMax: tierQtys[tierQtys.length - 1] ?? 30,
+  minPrice: prices[0],
+  maxPrice: prices[prices.length - 1],
+  colorCount: S.colors.length,
+  colorNames: S.colors.map(c => c.en),
+  colorList: S.colors.map(c => c.en).join(', ')
+};
+
+const routeByPage = Object.fromEntries(ROUTES.map(r => [r.page, r]));
 const pageUrl = r => site.url + (r.path === '/' ? '/' : r.path);
-const pub = ROUTES.filter(r => r.public && !r.template);
+const copyFor = key => {
+  const c = PAGE_COPY[key];
+  const meta = PAGES[key];
+  return {
+    label: (c && c.label) || (meta && meta.title.en) || key,
+    desc: c ? c.d(F) : (meta ? meta.description.en : '')
+  };
+};
 
 /* ---------------- llms.txt (concise index) ---------------- */
 const L = [];
@@ -29,94 +68,101 @@ L.push(`# ${site.name}`);
 L.push('');
 L.push(`> ${site.tagline.en} — ${site.tagline.fr} — ${site.tagline.ar}`);
 L.push('');
-L.push('Handmade satin rose atelier in Tangier, Morocco. Roses in 3 colors (Blue, Red, Dark Red), custom bouquet builder (5–30 roses), cash-on-delivery WhatsApp checkout. **Delivery inside Tangier only.** Prices 45–270 MAD. Languages: Arabic (default), French, English.');
+L.push(
+  `Handmade satin-rose atelier in Tangier, Morocco. Roses in ${F.colorCount} satin colors (${F.colorList}), ` +
+  `custom bouquet builder (${F.builderMin}–${F.builderMax} roses at ${F.unit} DH/rose), ready bouquets and velvet boxes, ` +
+  `cash-on-delivery WhatsApp checkout. **Delivery inside Tangier only — never nationwide.** ` +
+  `Prices ${F.minPrice}–${F.maxPrice} MAD. Languages: Arabic (default), French, English. ` +
+  `AI index: ai-sitemap.xml · policies: ai.txt.`
+);
 L.push('');
 L.push('## Pages');
-for (const r of pub) {
-  const m = PAGES[r.page];
-  L.push(`- [${m.title.en}](${pageUrl(r)}): ${m.description.en}`);
+for (const key of LLMS_PAGE_ORDER) {
+  const r = routeByPage[key];
+  if (!r || !r.public) continue;
+  const { label, desc } = copyFor(key);
+  L.push(`- [${label}](${pageUrl(r)}): ${desc}`);
 }
 L.push('');
-L.push('## Catalog (each rose has its own URL)');
+L.push('## Catalog (each product has its own URL)');
 for (const pr of prodRoutes) {
-  L.push(`- [${pr.name.en} — ${money(pr.price)}](${site.url}${pr.path}): ${pr.roses} handmade satin roses`);
+  const blurb = PRODUCT_BLURBS[pr.slug] || `${pr.roses} handmade satin rose${pr.roses === 1 ? '' : 's'}`;
+  L.push(`- [${pr.name.en} — ${money(pr.price)}](${site.url}${pr.path}): ${blurb}`);
 }
 L.push('');
 L.push('## Policies');
-L.push(`- Delivery: Tangier city only — ${money(S.zones[0]?.fee ?? 20)}`);
-L.push('- Payment: cash on delivery (COD), ordered via WhatsApp');
-L.push('- Builder tiers: ' + S.builderTiers.map(t => `${t.qty} roses ${money(t.price)}`).join(', '));
-L.push('- Add-ons: ' + S.addons.map(a => `${a.en} +${money(a.price)}`).join(', '));
-L.push('');
-L.push(`Generated ${today}. Full content: ${site.url}/llms-full.txt`);
+for (const line of POLICIES(F)) L.push(`- ${line}`);
 fs.writeFileSync(path.join(ROOT, 'public/llms.txt'), L.join('\n') + '\n');
 
 /* ---------------- llms-full.txt (complete trilingual content) ---------------- */
-const F = [];
-F.push(`# ${site.name} — full reference for AI assistants`);
-F.push('');
-F.push(`> ${site.tagline.en}. ${site.tagline.fr}. ${site.tagline.ar}.`);
-F.push(`> URL: ${site.url}/ · Updated: ${today} · Languages: AR (default), FR, EN`);
-F.push('');
-F.push('## What this business is');
-F.push(`${site.name} is a family atelier in Tangier, Morocco, handcrafting satin roses that never wilt. Customers order ready bouquets or build custom ones (5–30 roses) on the website, choose a color, optional add-ons, then complete the order over WhatsApp with cash on delivery.`);
-F.push('');
+const F2 = [];
+F2.push(`# ${site.name} — full reference for AI assistants`);
+F2.push('');
+F2.push(`> ${site.tagline.en}. ${site.tagline.fr}. ${site.tagline.ar}.`);
+F2.push(`> URL: ${site.url}/ · Updated: ${today} · Languages: AR (default), FR, EN`);
+F2.push('');
+F2.push('## What this business is');
+F2.push(BUSINESS(F));
+F2.push('');
 for (const lang of ['en', 'fr', 'ar']) {
-  F.push(`## Catalog (${lang})`);
-  F.push('');
+  F2.push(`## Catalog (${lang})`);
+  F2.push('');
   for (const p of products) {
     const c = productCard(p);
-    F.push(`### ${c.name[lang]} — ${money(c.price.amount)}`);
-    F.push(`- URL: ${site.url}${c.url}`);
-    F.push(`- Roses: ${c.roses}${c.oldPrice ? ` (was ${money(c.oldPrice)})` : ''}${p.badge ? ` · badge: ${p.badge}` : ''}`);
-    if (c.description[lang]) F.push(`- ${c.description[lang]}`);
-    F.push('');
+    F2.push(`### ${c.name[lang]} — ${money(c.price.amount)}`);
+    F2.push(`- URL: ${site.url}${c.url}`);
+    F2.push(`- Roses: ${c.roses}${c.oldPrice ? ` (was ${money(c.oldPrice)})` : ''}${p.badge ? ` · badge: ${p.badge}` : ''}`);
+    if (c.description[lang]) F2.push(`- ${c.description[lang]}`);
+    F2.push('');
   }
 }
-F.push('## Rose colors (editable live by the shop)');
+F2.push('## Rose colors (editable live by the shop)');
 for (const col of S.colors) {
-  F.push(`- ${col.en} / ${col.fr} / ${col.ar} — ${col.hex}${col.available ? '' : ' (currently unavailable)'}`);
+  F2.push(`- ${col.en} / ${col.fr} / ${col.ar} — ${col.hex}${col.available === false ? ' (currently unavailable)' : ''}`);
 }
-F.push('');
-F.push('## Custom bouquet builder');
-F.push('Tiers: ' + S.builderTiers.map(t => `${t.qty} roses = ${money(t.price)}`).join(' · '));
-F.push(`Custom quantity: ${money(0).replace('0', String(S.settings.builderUnit))} per rose. Add-ons: ` +
+F2.push('');
+F2.push('## Custom bouquet builder');
+F2.push('Tiers: ' + S.builderTiers.map(t => `${t.qty} roses = ${money(t.price)}`).join(' · '));
+F2.push(`Custom quantity: ${money(F.unit)} per rose. Add-ons: ` +
   S.addons.map(a => `${a.en}/${a.fr}/${a.ar} +${money(a.price)}${a.hasText ? ' (optional gift text)' : ''}`).join(' · '));
-F.push('');
-F.push('## Order & delivery policy');
-F.push('- Delivery area: **Tangier city only** (no shipping to other cities).');
-F.push(`- Delivery fee: ${money(S.zones[0]?.fee ?? 20)} · free over ${money(S.settings.freeShip)}.`);
-F.push('- Payment: cash on delivery (COD) — no prepayment.');
-F.push('- Ordering: checkout opens WhatsApp with a pre-filled order message; customers keep an order ID for tracking at ' + site.url + '/track.');
-F.push(`- Store WhatsApp: +${S.settings.whatsapp}`);
-F.push('');
-F.push('## FAQ');
-F.push('Q: Do roses wilt? A: No — they are handmade from satin and last for years.');
-F.push('Q: Do you ship outside Tangier? A: No, delivery is inside Tangier only.');
-F.push('Q: Can I choose the color? A: Yes — blue, red or dark red, chosen per product and in the builder.');
-F.push('Q: How do I pay? A: Cash on delivery when the order arrives.');
-F.push('Q: Can I track my order? A: Yes, with your RBM order ID at ' + site.url + '/track.');
-F.push('');
-F.push('## Site directory');
+F2.push('');
+F2.push('## Order & delivery policy');
+F2.push('- Delivery area: **Tangier city only** (no shipping to other cities).');
+F2.push(`- Delivery fee: ${money(F.fee)} · free over ${money(F.freeShip)}.`);
+F2.push('- Payment: cash on delivery (COD) — no prepayment.');
+F2.push(`- Ordering: checkout opens WhatsApp with a pre-filled order message; customers keep an order ID for tracking at ${site.url}/track.`);
+F2.push(`- Store WhatsApp: +${F.whatsapp}`);
+F2.push('');
+F2.push('## FAQ');
+for (const line of FULL_FAQ(F)) F2.push(line);
+F2.push('');
+F2.push('## Site directory');
 for (const r of ROUTES) {
   const m = PAGES[r.page];
-  F.push(`- ${site.url}${r.path} — ${m.title.en}${r.public ? '' : ' (functional page, not indexed)'}`);
+  F2.push(`- ${site.url}${r.path} — ${m ? m.title.en : r.page}${r.public ? '' : ' (functional page, not indexed)'}`);
 }
-F.push('- ' + site.url + '/admin/ — private CMS (closed to crawlers)');
-F.push('');
-fs.writeFileSync(path.join(ROOT, 'public/llms-full.txt'), F.join('\n') + '\n');
+F2.push(`- ${site.url}/admin/ — private CMS (closed to crawlers)`);
+F2.push('');
+F2.push('');
+F2.push('## Site sections (beyond the catalog)');
+for (const line of SITE_SECTIONS(F)) F2.push(line);
+F2.push('');
+F2.push('## FAQ (short)');
+for (const line of SHORT_FAQ_AR) F2.push(line);
+fs.writeFileSync(path.join(ROOT, 'public/llms-full.txt'), F2.join('\n') + '\n');
 
 /* ---------------- ai.txt (crawler policy) ---------------- */
+const pol = AI_POLICY(F);
 const AI = [];
 AI.push(`# AI policy — ${site.name}`);
 AI.push(`# ${site.url} · updated ${today}`);
 AI.push('');
-AI.push('SUMMARY: Handmade satin roses atelier in Tangier, Morocco. Catalog, prices and policies are public and safe to quote.');
-AI.push('ALLOWED: public pages, catalog, prices, llms.txt, llms-full.txt, sitemaps.');
-AI.push('NOT-ALLOWED: /admin/ (private CMS), /cart, /checkout (functional), order data, phone numbers of customers.');
-AI.push('ATTRIBUTION: cite as "Rose by Marry — rosebymarry.com".');
-AI.push('PRICES: in Moroccan dirham (MAD), cash on delivery, Tangier-only delivery.');
-AI.push('CONTACT: WhatsApp +' + S.settings.whatsapp);
+AI.push(`SUMMARY: ${pol.summary}`);
+AI.push(`ALLOWED: ${pol.allowed}`);
+AI.push(`NOT-ALLOWED: ${pol.notAllowed}`);
+AI.push(`ATTRIBUTION: ${pol.attribution}`);
+AI.push(`PRICES: ${pol.prices}`);
+AI.push(`CONTACT: ${pol.contact}`);
 AI.push('');
 AI.push('Machine-readable indexes:');
 AI.push('- ' + site.url + '/llms.txt');
