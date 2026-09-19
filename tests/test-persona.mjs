@@ -1,11 +1,13 @@
 /* Persona journey: girl buys a gift → checkout → WhatsApp (the money path) */
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const SEED = { settings: { whatsapp: '212772966980', currency: 'DH', siteUrl: '', passHash: null, freeShip: 500, builderUnit: 9 }, categories: [{ id: 'bouq', icon: '', ar: 'باقات', fr: 'B', en: 'B' }], products: [{ id: 'amour', cat: 'bouq', type: 'bouquet', qty: 10, ar: 'باقة أمور', fr: 'Bouquet Amour', en: 'Amour Bouquet', price: 90, old: 0, badge: '', featured: true, active: true }], colors: [{ id: 'red', ar: 'أحمر', fr: 'Rouge', en: 'Red', hex: '#C8102E', available: true }, { id: 'pink', ar: 'وردي', fr: 'Rose', en: 'Pink', hex: '#E5699B', available: true }], addons: [{ id: 'crown', icon: '', ar: 'تاج', fr: 'Couronne', en: 'Crown', price: 20, hasText: false, enabled: true }, { id: 'card', icon: '', ar: 'بطاقة', fr: 'Carte', en: 'Card', price: 0, hasText: true, enabled: true }], builderTiers: [{ id: 'b10', qty: 10, price: 90 }], zones: [{ id: 'tanger', ar: 'طنجة', fr: 'Tanger', en: 'Tangier', fee: 20 }], promoCodes: [{ id: 'p1', code: 'ROSE10', type: 'percent', value: 10, minTotal: 0, enabled: true, used: 0 }], discounts: [], reviews: [], orders: [], pageviews: {}, prodViews: {} };
 const mk = async (page, q = '', ls = {}) => {
   const vc = new VirtualConsole();

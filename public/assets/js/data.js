@@ -291,12 +291,15 @@ function loadState() {
         s.settings.whatsapp = sanitizeDigits(o.settings.whatsapp, 16) || s.settings.whatsapp;
         s.settings.currency = sanitize(o.settings.currency, 8) || s.settings.currency;
         s.settings.passHash = typeof o.settings.passHash === 'string' ? o.settings.passHash : null;
-        saveStateTo(s);
-        return s;
+        saveStateTo(migrate(s));
+        return migrate(s);
       }
     }
   } catch (e) {}
-  return defaultState();
+  /* Always run the defaults through migrate(): it is what stamps product slugs,
+     so a first-time visitor can open the canonical /product?id=bouquet-amour URL
+     instead of getting an empty "no results" page. */
+  return migrate(defaultState());
 }
 function saveStateTo(state) { store.set(STATE_KEY, JSON.stringify(state)); idbSave(state); }
 function saveState() { saveStateTo(S); }
@@ -332,6 +335,17 @@ var WISH = {
 
 /* ---------- shared pricing & lookups ---------- */
 function prodById(pid) { return S.products.find(p => p.id === pid) || null; }
+/* Resolve a product from a URL "?id=" value: raw id, stored slug, or the slug the
+   catalog generates from any of its names. Keeps canonical/shared/sitemap links
+   working even for state saved before slugs existed. */
+function prodBySlug(key) {
+  const k = sanitize(String(key == null ? '' : key), 90).toLowerCase();
+  if (!k) return null;
+  return S.products.find(p => String(p.id).toLowerCase() === k)
+    || S.products.find(p => String(p.slug || '').toLowerCase() === k)
+    || S.products.find(p => [p.fr, p.en, p.ar, p.id].some(v => v && slugify(v) === k))
+    || null;
+}
 function colorById(cid) { return S.colors.find(c => c.id === cid) || null; }
 function addonById(aid) { return S.addons.find(a => a.id === aid) || null; }
 function zoneById(zid) { return S.zones.find(z => z.id === zid) || null; }

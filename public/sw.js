@@ -1,7 +1,7 @@
 /* Rose by Marry — service worker (first-party, no deps)
    HTML navigations: network-first with offline fallback to last-seen page / home.
    Versioned assets & images: cache-first (they are ?v= busted / immutable). */
-const CACHE = 'rbm-v1';
+const CACHE = 'rbm-v2';
 self.addEventListener('install', () => { self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil((async () => {

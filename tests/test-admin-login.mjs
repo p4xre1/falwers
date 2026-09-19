@@ -1,9 +1,11 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); if (!c) process.exitCode = 1; };
-const html = fs.readFileSync('/home/user/rose-by-marry/public/admin/index.html', 'utf8');
+const html = fs.readFileSync(PUB + '/admin/index.html', 'utf8');
 const BASE = {
   settings: { whatsapp: '212772966980', currency: 'DH', siteUrl: '', passHash: null, freeShip: 500, builderUnit: 9 },
   categories: [{ id: 'bouq', icon: '', ar: 'باقات', fr: 'Bouquets', en: 'Bouquets' }],

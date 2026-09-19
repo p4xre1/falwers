@@ -1,5 +1,7 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
@@ -14,7 +16,7 @@ const mk = (page, seed = {}, url = 'http://localhost:8080/' + page) => {
     { id: 'cadre', cat: 'gift', type: 'gift', qty: 1, ar: 'إطار الإهداء', fr: 'Cadre Cadeau', en: 'Gift Frame', dar: '', dfr: '', den: '', price: 65, old: 80, badge: 'promo', featured: false, active: true, occ: ['thanks', 'grad'] }
   ], colors: [{ id: 'red', ar: 'أحمر', fr: 'R', en: 'R', hex: '#C8102E', available: true }, { id: 'blue', ar: 'أزرق', fr: 'B', en: 'B', hex: '#3A5FA8', available: true }], addons: [{ id: 'crown', icon: '', ar: 'تاج', fr: 'C', en: 'C', price: 20, hasText: false, enabled: true }], builderTiers: [{ id: 'b10', qty: 10, price: 90 }], zones: [{ id: 'tanger', ar: 'طنجة', fr: 'T', en: 'T', fee: 20 }], promoCodes: [{ id: 'p1', code: 'ROSE10', type: 'percent', value: 10, minTotal: 0, enabled: true, used: 0 }], discounts: [], reviews: [], orders: [], pageviews: {}, prodViews: {} };
   const S = Object.assign(BASE, seed);
-  const html = fs.readFileSync('/home/user/rose-by-marry/public/' + (url.startsWith('http://localhost:8080/') ? (url.slice(22).split('?')[0]) : page), 'utf8');
+  const html = fs.readFileSync(PUB + '/' + (url.startsWith('http://localhost:8080/') ? (url.slice(22).split('?')[0]) : page), 'utf8');
   const vc = new VirtualConsole(); vc.on('jsdomError', () => {});
   return new JSDOM(html, { url, runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc, beforeParse(w) { w.RBM_WEL_MS = 200; w.RBM_SP_MS = 250; w.localStorage.setItem('rbm_v2_state', JSON.stringify(S)); for (const [k, v] of Object.entries(seed.__ls || {})) w.localStorage.setItem(k, v); } });
 };

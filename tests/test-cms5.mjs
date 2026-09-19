@@ -1,5 +1,7 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); if (!c) process.exitCode = 1; };
@@ -21,7 +23,7 @@ async function loadAdmin(page, seedFn) {
   const vc = new VirtualConsole();
   const errs = [];
   vc.on('jsdomError', e => { if (!/not implemented|Could not load/i.test(String(e))) errs.push(String(e).slice(0, 200)); });
-  const html = fs.readFileSync('/home/user/rose-by-marry/public/admin/' + page + '.html', 'utf8');
+  const html = fs.readFileSync(PUB + '/admin/' + page + '.html', 'utf8');
   const dom = new JSDOM(html, { url: 'http://localhost:8080/admin/' + page + '.html', runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc, beforeParse(w) { if (seedFn) seedFn(w); } });
   await sleep(850);
   return { w: dom.window, d: dom.window.document, errs };
