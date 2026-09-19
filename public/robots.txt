@@ -1,0 +1,130 @@
+USER-AGENT: *
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: GPTBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: OAI-SearchBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: ChatGPT-User
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: ClaudeBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Claude-SearchBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Claude-User
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: anthropic-ai
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: PerplexityBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Perplexity-User
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Google-Extended
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Googlebot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Bingbot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Applebot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Applebot-Extended
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: CCBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Amazonbot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: meta-externalagent
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Bytespider
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: Diffbot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+USER-AGENT: YouBot
+ALLOW: /
+DISALLOW: /admin/
+DISALLOW: /cart
+DISALLOW: /checkout
+
+SITEMAP: https://rosebymarry.com/sitemap.xml
+SITEMAP: https://rosebymarry.com/ai-sitemap.xml
+AI-DIRECTIVES: https://rosebymarry.com/ai.txt
+LLMS: https://rosebymarry.com/llms.txt

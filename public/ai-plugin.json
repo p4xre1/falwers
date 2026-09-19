@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Rose by Marry",
+  "name_for_model": "rose_by_marry",
+  "description_for_human": "ورشة ورود ساتان مصنوعة يدوياً في طنجة — الدفع عند الاستلام.",
+  "description_for_model": "Rose by Marry is a handmade satin-roses atelier in Tangier, Morocco (Arabic-primary site, also French/English). Use this plugin to read the public store guide, product catalog, blog articles, FAQs, shipping and returns policies. Delivery is Tangier-only with cash on delivery; never claim nationwide Morocco delivery. Orders are placed via WhatsApp, not via API.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://rosebymarry.com/openapi.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://rosebymarry.com/assets/img/favicon.svg",
+  "contact_email": "hello@rosebymarry.com",
+  "legal_info_url": "https://rosebymarry.com/faq.html"
+}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; manifest-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Ratings — Admin CMS | Rose by Marry</title>
+<meta name="theme-color" content="#470D1B">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/img/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css?v=83">
+<link rel="stylesheet" href="assets/admin.css?v=83">
+</head>
+<body data-page="admin-reviews" data-admin-page="reviews">
+<noscript><p style="background:#A03A3A;color:#fff;padding:14px 18px;text-align:center">This page requires JavaScript. / تتطلب هذه الصفحة تفعيل JavaScript.</p></noscript>
+
+<header class="ad-head" id="adHead"></header>
+<div class="ad-body">
+  <nav class="ad-side" id="adSide" aria-label="Admin sections"></nav>
+  <main class="ad-main">
+    <div class="pane act">
+      <div class="pane-head"><h3 data-i18n="tab_reviews">التقييمات</h3></div>
+      <div class="set-card">
+        <h4 data-i18n="rev_add_t">إضافة تقييم</h4>
+        <div class="set-grid">
+          <div class="fld"><label for="rv_prod" data-i18n="th_prod">المنتج</label><select id="rv_prod" style="width:100%;border:none;border-bottom:1px solid var(--line-2);padding:10px 2px;font:inherit;background:transparent"></select></div>
+          <div class="fld"><label for="rv_name" data-i18n="rev_name">اسمك</label><input id="rv_name" type="text" maxlength="40"></div>
+        </div>
+        <div class="fld"><label data-i18n="rating_t">التقييم</label><div class="star-in" id="rvStars" role="radiogroup" aria-label="rating"></div></div>
+        <div class="fld"><label for="rv_text" data-i18n="rev_text">رأيك</label><textarea id="rv_text" maxlength="400" rows="3" style="width:100%;border:none;border-bottom:1px solid var(--line-2);padding:10px 2px;font:inherit;background:transparent;resize:vertical"></textarea></div>
+        <button class="btn btn-primary btn-sm" id="rvAdd" type="button" data-i18n="rev_send">إرسال التقييم</button>
+      </div>
+      <div id="revList2"></div></div>
+  </main>
+</div>
+
+
+<!-- PASSCODE GATE -->
+<div class="mbk" id="pcModal" role="dialog" aria-modal="true" aria-labelledby="pcTitle">
+  <div class="mcard sm">
+    <div class="pc-center">
+      <div class="gate-brand">
+        <div class="gb-name">Rose by Marry</div>
+        <div class="gb-sub">Admin CMS</div>
+      </div>
+      <div class="pc-ico" aria-hidden="true">R</div>
+      <h3 id="pcTitle" data-i18n="pc_t">دخول الإدارة</h3>
+      <p class="step-d" data-i18n="pc_d">أدخل رمز المرور للوصول إلى لوحة التحكم.</p>
+      <div class="fld" style="text-align:start">
+        <input id="pcUser" type="text" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="pc_user" placeholder="marry">
+      </div>
+      <div class="fld" style="text-align:start">
+        <input id="pcInput" type="password" maxlength="64" autocomplete="off" data-i18n-ph="pc_ph" placeholder="••••">
+      </div>
+      <input id="pc_web" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0">
+      <input id="pc_ts" type="hidden" value="">
+      <button class="btn btn-primary" id="pcGo" type="button" style="width:100%" data-i18n="pc_go">دخول</button>
+      <span class="pc-err" id="pcErr"></span>
+    </div>
+  </div>
+</div>
+<!-- CONFIRM -->
+<div class="mbk" id="cfModal" role="dialog" aria-modal="true">
+  <div class="mcard sm">
+    <h3 style="color:var(--wine);font-size:1.1rem;letter-spacing:.14em;text-transform:uppercase" id="cfTitle" data-i18n="cf_title"></h3>
+    <p style="color:var(--muted);font-size:.88rem;margin:10px 0 20px" id="cfMsg"></p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-danger" id="cfOk" type="button" style="flex:1" data-i18n="cf_ok">تأكيد</button>
+      <button class="btn btn-outline" id="cfCancel" type="button" style="flex:1" data-i18n="cf_cancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="../assets/js/i18n.js?v=83"></script>
+<script src="../assets/js/data.js?v=83"></script>
+<script src="../assets/js/ui.js?v=83"></script>
+<script src="assets/admin.js?v=83"></script>
+<script src="assets/errbar.js?v=83"></script>
+</body>
+</html>

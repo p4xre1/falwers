@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "rosebymarry": {
+      "name": "Rose by Marry Catalog",
+      "description": "Read-only discovery catalog of Rose by Marry public resources: handmade satin roses atelier in Tangier, Morocco. Product catalog, blog, FAQs, policies.",
+      "transport": "http",
+      "url": "https://rosebymarry.com/mcp.json",
+      "version": "1.0.0",
+      "auth": {
+        "type": "none",
+        "note": "Public read-only. The dashboard MCP token is reserved for a future write integration."
+      },
+      "resources": {
+        "store_guide": "https://rosebymarry.com/llms.txt",
+        "full_guide": "https://rosebymarry.com/llms-full.txt",
+        "ai_policies": "https://rosebymarry.com/ai.txt",
+        "sitemap": "https://rosebymarry.com/sitemap.xml",
+        "catalog": "https://rosebymarry.com/shop.html",
+        "blog": "https://rosebymarry.com/blog.html",
+        "faq": "https://rosebymarry.com/faq.html",
+        "about": "https://rosebymarry.com/about.html",
+        "delivery": "https://rosebymarry.com/faq.html"
+      },
+      "capabilities": {
+        "tools": [],
+        "resources": {
+          "listChanged": false
+        },
+        "prompts": []
+      },
+      "notes": "Static site (no server): this catalog is read-only discovery for AI assistants. Content in Arabic (primary), French and English. Cash on delivery, Tangier-only delivery."
+    }
+  }
+}

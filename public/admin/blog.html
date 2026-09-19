@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; manifest-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<title>Blog — Admin CMS | Rose by Marry</title>
+<meta name="theme-color" content="#470D1B">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/img/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/css/style.css?v=83">
+<link rel="stylesheet" href="assets/admin.css?v=83">
+</head>
+<body data-page="admin-blog" data-admin-page="blog">
+<noscript><p style="background:#A03A3A;color:#fff;padding:14px 18px;text-align:center">This page requires JavaScript. / تتطلب هذه الصفحة تفعيل JavaScript.</p></noscript>
+
+<header class="ad-head" id="adHead"></header>
+<div class="ad-body">
+  <nav class="ad-side" id="adSide" aria-label="Admin sections"></nav>
+  <main class="ad-main">
+    <div class="pane act">
+      <div class="pane-head"><h3 data-i18n="tab_blog">المدونة</h3></div>
+
+      <div class="set-card">
+        <h4 data-i18n="ab_new">مقال جديد</h4>
+        <div class="set-grid">
+          <div class="fld"><label for="bl_title_ar" data-i18n="ab_t_ar">العنوان (عربي) *</label><input id="bl_title_ar" type="text" maxlength="140"></div>
+          <div class="fld"><label for="bl_title_fr" data-i18n="ab_t_fr">العنوان (فرنسي)</label><input id="bl_title_fr" type="text" maxlength="140"></div>
+          <div class="fld"><label for="bl_title_en" data-i18n="ab_t_en">العنوان (إنجليزي)</label><input id="bl_title_en" type="text" maxlength="140"></div>
+          <div class="fld" style="grid-column:1/-1"><label for="bl_desc" data-i18n="ab_desc">وصف SEO</label><input id="bl_desc" type="text" maxlength="220"></div>
+          <div class="fld" style="grid-column:1/-1"><label for="bl_body" data-i18n="ab_body">نص المقال</label><textarea id="bl_body" rows="12" style="width:100%;border:1px solid var(--line-2);border-radius:12px;padding:12px;font:inherit;background:var(--soft)"></textarea></div>
+          <div class="fld"><label for="bl_tags" data-i18n="ab_tags">وسوم</label><input id="bl_tags" type="text" maxlength="160"></div>
+          <div class="fld"><label for="bl_keyword" data-i18n="ab_kw">الكلمة المفتاحية</label><input id="bl_keyword" type="text" maxlength="60"></div>
+          <div class="fld"><label for="bl_slug" data-i18n="ab_slug">الرابط (slug)</label><input id="bl_slug" type="text" class="ltr" maxlength="90"></div>
+          <div class="fld"><label for="bl_img" data-i18n="ab_img">رابط صورة المقال</label><input id="bl_img" type="text" class="ltr" maxlength="300" placeholder="https://... أو img/photo.jpg"></div>
+          <div class="fld"><label for="bl_alt" data-i18n="ab_alt">نص بديل للصورة (Alt)</label><input id="bl_alt" type="text" maxlength="140"></div>
+          <div class="fld" style="grid-column:1/-1"><label for="bl_faq" data-i18n="ab_faq">أسئلة شائعة</label><textarea id="bl_faq" rows="4" style="width:100%;border:1px solid var(--line-2);border-radius:12px;padding:12px;font:inherit;background:var(--soft)" placeholder="السؤال الأول :: الجواب الأول
+السؤال الثاني :: الجواب الثاني"></textarea></div>
+          <div class="fld" style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="bl_pub" checked style="accent-color:var(--gold);width:18px;height:18px"><span data-i18n="ab_pub">منشور</span></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-wine btn-sm" id="blSave" type="button" data-i18n="ab_save">حفظ ونشر</button>
+          <button class="btn btn-outline btn-sm" id="blNew" type="button" data-i18n="ab_new">مقال جديد</button>
+        </div>
+      </div>
+
+      <div class="set-card">
+        <h4 data-i18n="seo_ck">فحص SEO المباشر</h4>
+        <div id="seoList"></div>
+        <p class="seo-score" id="seoScore" style="margin-top:10px"></p>
+      </div>
+
+      <div class="set-card">
+        <h4 data-i18n="ab_bulk">استيراد جماعي</h4>
+        <div class="fld"><textarea id="bl_bulk" rows="8" style="width:100%;border:1px solid var(--line-2);border-radius:12px;padding:12px;font:inherit;background:var(--soft)" placeholder="title: عنوان المقال
+desc: وصف SEO للمقال
+kw: الكلمة المفتاحية
+faq: السؤال الأول :: الجواب الأول ;; السؤال الثاني :: الجواب
+فقرة أولى من نص المقال...
+فقرة ثانية...
+---
+title: المقال الثاني
+..."></textarea></div>
+        <button class="btn btn-wine btn-sm" id="blBulkGo" type="button" data-i18n="ab_bulk_go">استيراد المقالات</button>
+      </div>
+
+      <div class="set-card">
+        <h4 data-i18n="tab_blog">المدونة</h4>
+        <div id="blList"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+
+<!-- PASSCODE GATE -->
+<div class="mbk" id="pcModal" role="dialog" aria-modal="true" aria-labelledby="pcTitle">
+  <div class="mcard sm">
+    <div class="pc-center">
+      <div class="gate-brand">
+        <div class="gb-name">Rose by Marry</div>
+        <div class="gb-sub">Admin CMS</div>
+      </div>
+      <div class="pc-ico" aria-hidden="true">R</div>
+      <h3 id="pcTitle" data-i18n="pc_t">دخول الإدارة</h3>
+      <p class="step-d" data-i18n="pc_d">أدخل رمز المرور للوصول إلى لوحة التحكم.</p>
+      <div class="fld" style="text-align:start">
+        <input id="pcUser" type="text" maxlength="30" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="pc_user" placeholder="marry">
+      </div>
+      <div class="fld" style="text-align:start">
+        <input id="pcInput" type="password" maxlength="64" autocomplete="off" data-i18n-ph="pc_ph" placeholder="••••">
+      </div>
+      <input id="pc_web" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;height:0;width:0;opacity:0">
+      <input id="pc_ts" type="hidden" value="">
+      <button class="btn btn-primary" id="pcGo" type="button" style="width:100%" data-i18n="pc_go">دخول</button>
+      <span class="pc-err" id="pcErr"></span>
+    </div>
+  </div>
+</div>
+<!-- CONFIRM -->
+<div class="mbk" id="cfModal" role="dialog" aria-modal="true">
+  <div class="mcard sm">
+    <h3 style="color:var(--wine);font-size:1.1rem;letter-spacing:.14em;text-transform:uppercase" id="cfTitle" data-i18n="cf_title"></h3>
+    <p style="color:var(--muted);font-size:.88rem;margin:10px 0 20px" id="cfMsg"></p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-danger" id="cfOk" type="button" style="flex:1" data-i18n="cf_ok">تأكيد</button>
+      <button class="btn btn-outline" id="cfCancel" type="button" style="flex:1" data-i18n="cf_cancel">إلغاء</button>
+    </div>
+  </div>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="../assets/js/i18n.js?v=83"></script>
+<script src="../assets/js/data.js?v=83"></script>
+<script src="../assets/js/ui.js?v=83"></script>
+<script src="assets/errbar.js?v=83"></script>
+<script src="assets/admin.js?v=83"></script>
+</body>
+</html>

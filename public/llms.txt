@@ -1,0 +1,38 @@
+# Rose by Marry
+
+> Handmade satin roses in Tangier — Roses en satin faites main à Tanger — ورود ساتان مصنوعة يدوياً في طنجة
+
+Handmade satin-rose atelier in Tangier, Morocco. Roses in 5 satin colors (Blue, Red, Dark Red, Tangier Blue, Tangier Pink), custom bouquet builder (5–30 roses at 9 DH/rose), ready bouquets and velvet boxes, cash-on-delivery WhatsApp checkout. **Delivery inside Tangier only — never nationwide.** Prices 15–550 MAD. Languages: Arabic (default), French, English. AI index: ai-sitemap.xml · policies: ai.txt.
+
+## Pages
+- [Home](https://rosebymarry.com/): Boutique + custom bouquet builder (5–30 roses, live price).
+- [Shop](https://rosebymarry.com/shop): Full collection with occasion, color, price and sort filters (supports ?occ= and ?max= deep links).
+- [Gifts by occasion](https://rosebymarry.com/occasions): Curated gifts for weddings, birthdays, anniversaries, graduation, new baby, thank-you + budget tiers (under 100 / 100–250 / above 250 DH).
+- [Offers](https://rosebymarry.com/offers): Current offers — 10% welcome code ROSE10, free delivery from 500 DH, builder from 9 DH/rose.
+- [Blog](https://rosebymarry.com/blog): Care guides and gift advice articles (Arabic-first).
+- [Care guide](https://rosebymarry.com/care): The 6 rules to make satin roses last a year+ (no water, weekly air-dust, no direct sun, avoid humidity, reshape petals, proper storage).
+- [Size guide](https://rosebymarry.com/size-guide): Dimensions of bouquets and boxes (roses count, height, diameter).
+- [FAQ](https://rosebymarry.com/faq): Delivery time (same day if ordered before 16:00), COD, 48h replacement, custom orders.
+- [Our story](https://rosebymarry.com/about): Family atelier in Tangier handcrafting every rose from luxurious satin.
+- [Contact](https://rosebymarry.com/contact): WhatsApp +212772966980 — Arabic, French or English.
+
+## Catalog (each product has its own URL)
+- [Amour Bouquet — 90 MAD](https://rosebymarry.com/product?id=bouquet-amour): 10 handmade satin roses
+- [Royal Heart — 180 MAD](https://rosebymarry.com/product?id=coeur-royal): 20 handmade satin roses
+- [Casa Star — 150 MAD](https://rosebymarry.com/product?id=etoile-de-casa): 15 handmade satin roses
+- [Mini Rosé — 45 MAD](https://rosebymarry.com/product?id=mini-rose): 5 handmade satin roses
+- [Square Box — 160 MAD](https://rosebymarry.com/product?id=boite-carree): 9 satin roses in velvet box
+- [Heart Box — 220 MAD](https://rosebymarry.com/product?id=boite-coeur): 12 heart-shaped satin roses
+- [Luxe Coffret — 350 MAD](https://rosebymarry.com/product?id=coffret-luxe): 25 satin roses coffret
+- [Valentine Pack — 300 MAD](https://rosebymarry.com/product?id=pack-saint-valentin): 30 satin roses
+- [Wedding Set — 550 MAD](https://rosebymarry.com/product?id=ensemble-maries): 50 satin roses
+- [Birthday Gift — 140 MAD](https://rosebymarry.com/product?id=cadeau-anniversaire): 12 satin roses
+- [Single Rose — 15 MAD](https://rosebymarry.com/product?id=rose-unique): 1 handmade satin rose
+- [Satin Butterflies ×6 — 30 MAD](https://rosebymarry.com/product?id=papillons-satin-6): 6 satin butterflies
+- [Gift Frame — 65 MAD](https://rosebymarry.com/product?id=cadre-cadeau): framed satin rose
+
+## Policies
+- Payment: cash on delivery (COD) only. No online payment.
+- Delivery: inside Tangier only, same day if ordered before 16:00, otherwise next day. Free from 500 DH. Never claim nationwide Morocco delivery.
+- Replacement: within 48h if defective or not as ordered.
+- Orders: completed over WhatsApp (+212 772-966980). No accounts, no order database.

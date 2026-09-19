@@ -1,0 +1,14 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Rose by Marry — public catalog (read-only)", "version": "1.0.0", "description": "Static read-only resources for AI assistants. No write endpoints exist." },
+  "servers": [ { "url": "https://rosebymarry.com" } ],
+  "paths": {
+    "/llms.txt": { "get": { "summary": "Store guide (short)", "operationId": "getLlms", "responses": { "200": { "description": "text/plain guide" } } } },
+    "/llms-full.txt": { "get": { "summary": "Store guide (full)", "operationId": "getLlmsFull", "responses": { "200": { "description": "text/plain full guide" } } } },
+    "/ai.txt": { "get": { "summary": "AI usage policies", "operationId": "getAiTxt", "responses": { "200": { "description": "text/plain policies" } } } },
+    "/sitemap.xml": { "get": { "summary": "Sitemap of public routes", "operationId": "getSitemap", "responses": { "200": { "description": "application/xml" } } } },
+    "/blog.html": { "get": { "summary": "Blog listing (published articles)", "operationId": "getBlog", "responses": { "200": { "description": "text/html, Arabic primary" } } } },
+    "/shop.html": { "get": { "summary": "Product catalog", "operationId": "getShop", "responses": { "200": { "description": "text/html" } } } },
+    "/faq.html": { "get": { "summary": "FAQ with FAQPage schema.org markup", "operationId": "getFaq", "responses": { "200": { "description": "text/html" } } } }
+  }
+}

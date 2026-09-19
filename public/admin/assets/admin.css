@@ -1,0 +1,41 @@
+/* ============================================================
+   Rose by Marry — Admin CMS (multi-page shell)
+   Builds on assets/css/style.css
+   ============================================================ */
+html, body { height: 100%; }
+body[data-page^="admin-"] { background: #FAF7F3; }
+/* content hidden until passcode unlock */
+body.gated .ad-head, body.gated .ad-body { visibility: hidden; }
+.ad-body { height: calc(100% - 69px); }
+.ad-side { position: relative; }
+.ad-main { background: #FAF7F3; }
+.pane { max-width: 1180px; }
+
+/* small responsive helpers for dense admin rows */
+@media (max-width: 1180px) {
+  .arow { grid-template-columns: 1fr 1fr !important; }
+  .arow .del-btn { justify-self: end; }
+}
+@media (max-width: 700px) {
+  .arow { grid-template-columns: 1fr !important; }
+}
+
+/* gate hint under modal */
+.gate-brand { text-align: center; margin-bottom: 4px; }
+.gate-brand .gb-name { font-family: var(--f-head); letter-spacing: .3em; text-transform: uppercase; font-size: 1rem; color: var(--ink); }
+.gate-brand .gb-sub { font-size: .6rem; letter-spacing: .34em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+.pc-ico{width:64px;height:64px;margin:0 auto 14px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-family:var(--f-disp);font-size:1.7rem;color:var(--gold)}
+
+/* v5 — scan round-2: shared hint + misc control styles */
+.set-sub{font-size:.8rem;color:var(--mut);line-height:1.7;margin:4px 0 10px}
+.rows-colors{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:center}
+.bl-del{color:var(--err)}
+@media (max-width:720px){.rows-colors{grid-template-columns:1fr}}
+
+/* v6 — scroll fix: grid/flex children default min-height:auto which disables overflow:auto
+   inside the fixed-height .ad-body shell. Reset it so panes scroll internally at every width. */
+.ad-body > *{min-height:0;min-width:0}
+.ad-main{min-height:0;-webkit-overflow-scrolling:touch}
+.ad-side{min-height:0}
+@media(max-width:820px){.ad-body{grid-template-rows:auto 1fr}.ad-side{flex:0 0 auto;max-height:32vh}}

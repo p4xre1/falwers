@@ -1,0 +1,13 @@
+# Cloudflare Pages — Rose by Marry (static, no build step required)
+name = "rose-by-marry"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "public"
+
+# Deploy:  npx wrangler pages deploy public
+# Preview: npx wrangler pages dev public
+
+[vars]
+SITE_URL = "https://rosebymarry.com"
+
+# Optional: generate AI/SEO files before deploy
+# node scripts/generate-llms-enhanced.mjs && node scripts/optimize-ai-seo.mjs

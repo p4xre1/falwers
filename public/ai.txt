@@ -1,0 +1,15 @@
+# AI policy — Rose by Marry
+# https://rosebymarry.com · updated 2026-09-19
+
+SUMMARY: Handmade satin roses atelier in Tangier, Morocco. Catalog, prices and policies are public and safe to quote.
+ALLOWED: public pages, catalog, prices, llms.txt, llms-full.txt, sitemaps.
+NOT-ALLOWED: /admin/ (private CMS), /cart, /checkout (functional), order data, phone numbers of customers.
+ATTRIBUTION: cite as "Rose by Marry — rosebymarry.com".
+PRICES: in Moroccan dirham (MAD), cash on delivery, Tangier-only delivery.
+CONTACT: WhatsApp +212772966980
+
+Machine-readable indexes:
+- https://rosebymarry.com/llms.txt
+- https://rosebymarry.com/llms-full.txt
+- https://rosebymarry.com/ai-sitemap.xml
+- https://rosebymarry.com/sitemap.xml

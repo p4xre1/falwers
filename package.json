@@ -1,0 +1,19 @@
+{
+  "name": "rose-by-marry",
+  "version": "5.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Handmade satin roses boutique — static multi-page site + AI/SEO layer. No dependencies.",
+  "scripts": {
+    "start": "python3 -m http.server 8080 --bind 0.0.0.0 -d public",
+    "llms": "node scripts/generate-llms-enhanced.mjs",
+    "seo": "node scripts/optimize-ai-seo.mjs",
+    "optimize": "npm run llms && npm run seo",
+    "deploy": "npx wrangler pages deploy public",
+    "verify": "node scripts/verify.mjs",
+    "test": "node scripts/run-tests.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

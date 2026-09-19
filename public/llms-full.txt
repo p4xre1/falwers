@@ -1,0 +1,258 @@
+# Rose by Marry — full reference for AI assistants
+
+> Handmade satin roses in Tangier. Roses en satin faites main à Tanger. ورود ساتان مصنوعة يدوياً في طنجة.
+> URL: https://rosebymarry.com/ · Updated: 2026-09-19 · Languages: AR (default), FR, EN
+
+## What this business is
+Rose by Marry is a family atelier in Tangier, Morocco, handcrafting satin roses that never wilt. Customers order ready bouquets or build custom ones (5–30 roses) on the website, choose a color, optional add-ons, then complete the order over WhatsApp with cash on delivery.
+
+## Catalog (en)
+
+### Amour Bouquet — 90 MAD
+- URL: https://rosebymarry.com/product?id=bouquet-amour
+- Roses: 10 (was 110 MAD) · badge: best
+- Ten satin roses in elegant pink wrap — a heart-melting classic.
+
+### Royal Heart — 180 MAD
+- URL: https://rosebymarry.com/product?id=coeur-royal
+- Roses: 20
+- Twenty luxurious roses for the grandest occasions.
+
+### Casa Star — 150 MAD
+- URL: https://rosebymarry.com/product?id=etoile-de-casa
+- Roses: 15 · badge: new
+- Fifteen roses with a modern star-shaped arrangement.
+
+### Mini Rosé — 45 MAD
+- URL: https://rosebymarry.com/product?id=mini-rose
+- Roses: 5 (was 60 MAD) · badge: promo
+- Five tender roses for a sweet little gesture.
+
+### Square Box — 160 MAD
+- URL: https://rosebymarry.com/product?id=boite-carree
+- Roses: 9 · badge: best
+- Nine satin roses in an elegant velvet square box.
+
+### Heart Box — 220 MAD
+- URL: https://rosebymarry.com/product?id=boite-coeur
+- Roses: 12 (was 260 MAD) · badge: promo
+- Twelve roses arranged as a heart — the perfect gift.
+
+### Luxe Coffret — 350 MAD
+- URL: https://rosebymarry.com/product?id=coffret-luxe
+- Roses: 25 · badge: new
+- Twenty-five roses in a grand luxe coffret.
+
+### Valentine Pack — 300 MAD
+- URL: https://rosebymarry.com/product?id=pack-saint-valentin
+- Roses: 30 (was 350 MAD) · badge: best
+- Thirty red roses with butterflies and crown — an unforgettable declaration.
+
+### Wedding Set — 550 MAD
+- URL: https://rosebymarry.com/product?id=ensemble-maries
+- Roses: 50
+- Fifty white and burgundy roses for the big day.
+
+### Birthday Gift — 140 MAD
+- URL: https://rosebymarry.com/product?id=cadeau-anniversaire
+- Roses: 12
+- Twelve colorful roses with butterflies to celebrate right.
+
+### Single Rose — 15 MAD
+- URL: https://rosebymarry.com/product?id=rose-unique
+- Roses: 1
+- One satin rose with a decorated stem — thinking of you.
+
+### Satin Butterflies ×6 — 30 MAD
+- URL: https://rosebymarry.com/product?id=papillons-satin-6
+- Roses: 6
+- Six satin butterflies to adorn gifts and treats.
+
+### Gift Frame — 65 MAD
+- URL: https://rosebymarry.com/product?id=cadre-cadeau
+- Roses: 1 (was 80 MAD) · badge: promo
+- An ornate frame with a satin rose and handwritten card.
+
+## Catalog (fr)
+
+### Bouquet Amour — 90 MAD
+- URL: https://rosebymarry.com/product?id=bouquet-amour
+- Roses: 10 (was 110 MAD) · badge: best
+- Dix roses en satin, emballage rose élégant qui fait fondre les cœurs.
+
+### Cœur Royal — 180 MAD
+- URL: https://rosebymarry.com/product?id=coeur-royal
+- Roses: 20
+- Vingt roses dexception pour les grandes occasions.
+
+### Étoile de Casa — 150 MAD
+- URL: https://rosebymarry.com/product?id=etoile-de-casa
+- Roses: 15 · badge: new
+- Quinze roses au style moderne, arrangement en étoile.
+
+### Mini Rosé — 45 MAD
+- URL: https://rosebymarry.com/product?id=mini-rose
+- Roses: 5 (was 60 MAD) · badge: promo
+- Cinq roses tendres pour une douce attention.
+
+### Boîte Carrée — 160 MAD
+- URL: https://rosebymarry.com/product?id=boite-carree
+- Roses: 9 · badge: best
+- Neuf roses satin dans une boîte carrée en velours.
+
+### Boîte Cœur — 220 MAD
+- URL: https://rosebymarry.com/product?id=boite-coeur
+- Roses: 12 (was 260 MAD) · badge: promo
+- Douze roses en forme de cœur — cadeau parfait.
+
+### Coffret Luxe — 350 MAD
+- URL: https://rosebymarry.com/product?id=coffret-luxe
+- Roses: 25 · badge: new
+- Vingt-cinq roses dans un coffret grand luxe.
+
+### Pack Saint-Valentin — 300 MAD
+- URL: https://rosebymarry.com/product?id=pack-saint-valentin
+- Roses: 30 (was 350 MAD) · badge: best
+- Trente roses rouges, papillons et couronne — déclaration inoubliable.
+
+### Ensemble Mariés — 550 MAD
+- URL: https://rosebymarry.com/product?id=ensemble-maries
+- Roses: 50
+- Cinquante roses blanches et bordeaux pour le grand jour.
+
+### Cadeau Anniversaire — 140 MAD
+- URL: https://rosebymarry.com/product?id=cadeau-anniversaire
+- Roses: 12
+- Douze roses colorées avec papillons pour fêter comme il se doit.
+
+### Rose Unique — 15 MAD
+- URL: https://rosebymarry.com/product?id=rose-unique
+- Roses: 1
+- Une rose satin avec tige décorée — « je pense à toi ».
+
+### Papillons Satin ×6 — 30 MAD
+- URL: https://rosebymarry.com/product?id=papillons-satin-6
+- Roses: 6
+- Six papillons en satin pour décorer cadeaux et douceurs.
+
+### Cadre Cadeau — 65 MAD
+- URL: https://rosebymarry.com/product?id=cadre-cadeau
+- Roses: 1 (was 80 MAD) · badge: promo
+- Cadre orné dune rose satin et dune carte manuscrite.
+
+## Catalog (ar)
+
+### باقة أمور — 90 MAD
+- URL: https://rosebymarry.com/product?id=bouquet-amour
+- Roses: 10 (was 110 MAD) · badge: best
+- عشر ورود ساتان بتغليف وردي وأناقة تبهج القلب.
+
+### القلب الملكي — 180 MAD
+- URL: https://rosebymarry.com/product?id=coeur-royal
+- Roses: 20
+- عشرون وردة فاخرة للمناسبات الكبيرة — فخامة تليق بمن تحب.
+
+### نجمة الدار البيضاء — 150 MAD
+- URL: https://rosebymarry.com/product?id=etoile-de-casa
+- Roses: 15 · badge: new
+- خمس عشرة وردة بلمسة عصرية وتنسيق النجمة الأنيق.
+
+### ميني روز — 45 MAD
+- URL: https://rosebymarry.com/product?id=mini-rose
+- Roses: 5 (was 60 MAD) · badge: promo
+- خمس ورود ناعمة لبداية حلوة أو اهتمام صغير بلا مناسبة.
+
+### العلبة المربعة — 160 MAD
+- URL: https://rosebymarry.com/product?id=boite-carree
+- Roses: 9 · badge: best
+- تسع ورود ساتان في علبة مربعة أنيقة بقماش المخمل.
+
+### علبة القلب — 220 MAD
+- URL: https://rosebymarry.com/product?id=boite-coeur
+- Roses: 12 (was 260 MAD) · badge: promo
+- اثنتا عشرة وردة على شكل قلب — هدية المواليد وعيد الحب.
+
+### صندوق الفخامة — 350 MAD
+- URL: https://rosebymarry.com/product?id=coffret-luxe
+- Roses: 25 · badge: new
+- خمس وعشرون وردة في صندوق فخم — تحفة فنية متكاملة.
+
+### باكة عيد الحب — 300 MAD
+- URL: https://rosebymarry.com/product?id=pack-saint-valentin
+- Roses: 30 (was 350 MAD) · badge: best
+- ثلاثون وردة حمراء بفراشات وتاج — إعلان حب لا يُنسى.
+
+### طقم العروسين — 550 MAD
+- URL: https://rosebymarry.com/product?id=ensemble-maries
+- Roses: 50
+- خمسون وردة بيضاء وعنابية ليوم لا يتكرر.
+
+### هدية عيد الميلاد — 140 MAD
+- URL: https://rosebymarry.com/product?id=cadeau-anniversaire
+- Roses: 12
+- اثنتا عشرة وردة ملونة مع فراشات لجعل أعياد الميلاد أجمل.
+
+### وردة مفردة — 15 MAD
+- URL: https://rosebymarry.com/product?id=rose-unique
+- Roses: 1
+- وردة ساتان واحدة بعنق مزخرف — «أفكر فيك».
+
+### فراشات ساتان ×6 — 30 MAD
+- URL: https://rosebymarry.com/product?id=papillons-satin-6
+- Roses: 6
+- ست فراشات ساتان لتزيين الهدايا والحلويات.
+
+### إطار الإهداء — 65 MAD
+- URL: https://rosebymarry.com/product?id=cadre-cadeau
+- Roses: 1 (was 80 MAD) · badge: promo
+- إطار مزخرف مع وردة ساتان وبطاقة إهداء مكتوبة بخط اليد.
+
+## Rose colors (editable live by the shop)
+- Blue / Bleu / أزرق — #3A5FA8
+- Red / Rouge / أحمر — #C8102E
+- Dark Red / Rouge foncé / أحمر داكن — #6E1423
+
+## Custom bouquet builder
+Tiers: 1 roses = 10 MAD · 5 roses = 45 MAD · 10 roses = 90 MAD · 15 roses = 135 MAD · 20 roses = 180 MAD · 30 roses = 270 MAD
+Custom quantity: 9 MAD per rose. Add-ons: Butterflies (Fraschat)/Papillons (Fraschat)/فراشات (فراشات) +5 MAD · Crown (Taj)/Couronne (Taj)/تاج +20 MAD · Lace/Dentelle/دانتيل +25 MAD · Ribbon / Gift Card/Ruban / Carte-message/شريط / بطاقة إهداء +0 MAD (optional gift text)
+
+## Order & delivery policy
+- Delivery area: **Tangier city only** (no shipping to other cities).
+- Delivery fee: 20 MAD · free over 500 MAD.
+- Payment: cash on delivery (COD) — no prepayment.
+- Ordering: checkout opens WhatsApp with a pre-filled order message; customers keep an order ID for tracking at https://rosebymarry.com/track.
+- Store WhatsApp: +212612345678
+
+## FAQ
+Q: Do roses wilt? A: No — they are handmade from satin and last for years.
+Q: Do you ship outside Tangier? A: No, delivery is inside Tangier only.
+Q: Can I choose the color? A: Yes — blue, red or dark red, chosen per product and in the builder.
+Q: How do I pay? A: Cash on delivery when the order arrives.
+Q: Can I track my order? A: Yes, with your RBM order ID at https://rosebymarry.com/track.
+
+## Site directory
+- https://rosebymarry.com/ — Rose by Marry — Handmade Satin Roses in Tangier
+- https://rosebymarry.com/shop — Shop — All Roses | Rose by Marry
+- https://rosebymarry.com/about — Our story | Rose by Marry
+- https://rosebymarry.com/contact — Contact us | Rose by Marry
+- https://rosebymarry.com/track — Track your order | Rose by Marry
+- https://rosebymarry.com/wishlist — Wishlist | Rose by Marry
+- https://rosebymarry.com/product — Rose | Rose by Marry
+- https://rosebymarry.com/cart — Cart | Rose by Marry (functional page, not indexed)
+- https://rosebymarry.com/checkout — Checkout — Cash on delivery | Rose by Marry (functional page, not indexed)
+- https://rosebymarry.com/admin/ — private CMS (closed to crawlers)
+
+
+## Site sections (beyond the catalog)
+- /occasions — gift finder by occasion (wedding, birthday, anniversary, graduation, baby, thanks) with shop filters ?occ= and budget tiers ?max=99 / ?max=250.
+- /offers — live offers: welcome code ROSE10 (-10% first order), free Tangier delivery from 500 DH, custom builder from 9 DH per rose.
+- /care — the atelier's 6 care rules: no water ever; weekly gentle air-dusting; no direct sunlight; avoid humid rooms; fluff petals after unwrapping; store in cardboard/paper, never tight plastic. With HowTo structured data.
+- /size-guide — approximate dimensions: bouquets S 5–9 roses (25cm high, 15cm Ø) / M 10–15 (35cm, 22cm) / L 16–25 (45cm, 30cm); boxes S 9 roses 15×15cm velvet / M 12–15 roses 20×20cm / L 20–25 roses 25×25cm.
+- /blog — Arabic-first articles with BlogPosting + speakable structured data; each article may embed an FAQ (FAQPage schema).
+- /faq — same-day Tangier delivery before 16:00, COD, 48h free replacement, custom/wedding orders via WhatsApp. FAQPage structured data.
+
+## FAQ (short)
+Q: متى يوصل طلبي؟ A: داخل طنجة — اليوم نفسه قبل 16:00، وإلا اليوم الموالي.
+Q: كيف أدفع؟ A: الدفع عند الاستلام نقداً — بلا دفع مسبق.
+Q: كم تبقى ورود الساتان؟ A: سنة كاملة وأكثر مع العناية — بلا ماء ولا ضوء.
+Q: هل يمكن استبدال الباقة؟ A: خلال 48 ساعة إذا كان المنتج معيباً أو مخالفاً.
