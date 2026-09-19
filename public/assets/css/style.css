@@ -1140,3 +1140,38 @@ body{overflow-x:clip;overflow-y:visible;min-height:100vh;touch-action:manipulati
 main.wrap{min-height:70vh}
 .empty.no-results{padding:clamp(48px,10vh,96px) 20px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
 .pd-missing-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* ============================================================
+   Real product photos (Supabase) — see supabase/migrations/0002_media.sql
+   Every rule here is additive: packs and colours with no photo yet keep
+   rendering the SVG mockups and the flat hex swatches exactly as before.
+   ============================================================ */
+/* photo fills the same box the mockup SVG used */
+.pc-art .art-photo{width:100%;height:230px;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.3,1)}
+.pcard:hover .pc-art .art-photo{transform:scale(1.055)}
+.pd-art .art-photo{width:100%;height:auto;display:block;border-radius:2px}
+/* the pd-art padding suits a line drawing, not a photograph */
+.pd-art:has(.art-photo){padding:0;overflow:hidden}
+.pd-media{position:sticky;top:120px;align-self:start;display:flex;flex-direction:column;gap:10px}
+.pd-media .pd-art{position:static}
+/* thumbnail strip: hidden until a pack actually has 2+ photos */
+.pd-thumbs{display:none;gap:8px;flex-wrap:wrap}
+.pd-thumbs.on{display:flex}
+.pd-th{width:64px;height:64px;padding:0;border:1px solid var(--line);background:var(--cream);cursor:pointer;overflow:hidden;transition:.2s;flex:none}
+.pd-th img{width:100%;height:100%;object-fit:cover;display:block}
+.pd-th.on{border-color:var(--wine);outline:1px solid var(--wine);outline-offset:1px}
+.pd-th:hover{border-color:var(--wine)}
+@media(max-width:900px){.pd-media{position:static}}
+/* colour swatch showing a real close-up photo: drop the moulded-plastic
+   shading so the photograph reads as a photograph */
+.sw .dot[style*="url("],.cdot[style*="url("]{box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+/* admin photo manager */
+.ph-grid{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.ph-item{position:relative;width:92px}
+.ph-item img{width:92px;height:92px;object-fit:cover;display:block;border:1px solid var(--line);background:var(--cream)}
+.ph-item.is-primary img{border-color:var(--wine);outline:1px solid var(--wine);outline-offset:1px}
+.ph-item .ph-tag{position:absolute;inset-inline-start:4px;top:4px;font-size:.55rem;letter-spacing:.08em;background:var(--wine);color:#fff;padding:1px 5px;border-radius:2px}
+.ph-item .ph-bar{display:flex;gap:4px;margin-top:4px}
+.ph-item .ph-bar button{flex:1;font-size:.6rem;padding:3px 0;border:1px solid var(--line);background:#fff;cursor:pointer}
+.ph-item .ph-bar button:hover{border-color:var(--wine);color:var(--wine)}
+.ph-empty{font-size:.72rem;color:var(--muted);padding:8px 0}

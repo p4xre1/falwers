@@ -20,6 +20,40 @@ function sanitize(str, max) {
     .slice(0, max);
 }
 function sanitizeDigits(str, max) { return String(str == null ? '' : str).replace(/[^\d]/g, '').slice(0, max || 16); }
+/* Image sources only. Allows https:, protocol-relative, site-relative and data:image
+   (admin previews before upload). Everything else — notably javascript: — becomes ''. */
+function sanitizeUrl(u) {
+  const s = String(u == null ? '' : u).trim().replace(/[\u0000-\u001F\u007F]/g, '');
+  if (!s) return '';
+  if (/^data:image\/(png|jpe?g|webp|avif|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(s)) return s.slice(0, 4000000);
+  if (/["'<>\\\s]/.test(s)) return '';
+  if (/^https:\/\/[^/]+\/?/i.test(s) || /^\/\/[^/]/.test(s)) return s.slice(0, 600);
+  /* relative path: reject any scheme (a ':' before the first '/') so
+     javascript:, data: and friends can never slip through as "relative". */
+  if (!/^[a-z0-9.+-]*:/i.test(s) && /^[\w./-]/.test(s)) return s.slice(0, 600);
+  return '';
+}
+/* Normalizes a product photo gallery. Keeps at most one primary per
+   product+color slot, mirroring the DB constraint in 0002_media.sql. */
+function normImgs(v) {
+  const seen = {};
+  return (Array.isArray(v) ? v : []).slice(0, 60).map(im => ({
+    id: String(im && im.id || uid()),
+    url: sanitizeUrl(im && im.url),
+    colorId: sanitize(im && im.colorId, 40),
+    alt: sanitize(im && im.alt, 160),
+    primary: !!(im && im.primary)
+  })).filter(im => im.url).map(im => {
+    const slot = im.colorId || '';
+    if (im.primary && seen[slot]) im.primary = false;
+    if (im.primary) seen[slot] = true;
+    return im;
+  }).map((im, i, all) => {
+    const slot = im.colorId || '';
+    if (!seen[slot] && all.findIndex(o => (o.colorId || '') === slot) === i) { im.primary = true; seen[slot] = true; }
+    return im;
+  });
+}
 function hex2rgb(h) { h = h.trim().replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
 function rgb2hex(r, g, b) { return '#' + [r, g, b].map(v => Math.round(clampNum(v, 0, 255)).toString(16).padStart(2, '0')).join(''); }
 function mix(h, h2, tt) { const a = hex2rgb(h), b = hex2rgb(h2); return rgb2hex(a[0] + (b[0] - a[0]) * tt, a[1] + (b[1] - a[1]) * tt, a[2] + (b[2] - a[2]) * tt); }
@@ -183,6 +217,13 @@ function migrate(p) {
   s.settings.lastLogin = clampNum(Math.round(Number(s.settings.lastLogin)) || 0, 0, 4102444800000);
   s.settings.failCount = clampNum(Math.round(Number(s.settings.failCount)) || 0, 0, 9999);
   s.settings.plugins = Object.assign({ welcome: true, proof: true, petals: true, waFloat: true, blog: true }, (s.settings.plugins && typeof s.settings.plugins === 'object') ? s.settings.plugins : {});
+  /* Supabase (optional). Empty url = site runs fully offline on LocalStorage,
+     exactly as before. Only the public anon key belongs here — it is visible
+     to every visitor; RLS in 0002_media.sql is what protects the data. */
+  s.settings.supabase = Object.assign({ url: '', anonKey: '', bucket: 'media' }, (s.settings.supabase && typeof s.settings.supabase === 'object') ? s.settings.supabase : {});
+  s.settings.supabase.url = sanitize(s.settings.supabase.url, 200).replace(/\/+$/, '');
+  s.settings.supabase.anonKey = sanitize(s.settings.supabase.anonKey, 400);
+  s.settings.supabase.bucket = sanitize(s.settings.supabase.bucket, 60) || 'media';
   if (typeof s.settings.mcpToken !== 'string' || s.settings.mcpToken.length < 8) s.settings.mcpToken = 'rbm_' + Math.random().toString(36).slice(2, 12);
   if (typeof s.settings.passHash !== 'string') s.settings.passHash = null;
   s.categories = (Array.isArray(p.categories) && p.categories.length ? p.categories : d.categories).map(c => ({
@@ -198,11 +239,16 @@ function migrate(p) {
     badge: ['', 'new', 'best', 'promo'].indexOf(x && x.badge) >= 0 ? x.badge : '',
     slug: slugify((x && x.fr) || (x && x.en) || (x && x.ar) || (x && x.id)),
     featured: !!(x && x.featured), active: x ? !!x.active : true,
-    occ: (Array.isArray(x && x.occ) ? x.occ : []).map(v => String(v || '')).filter(v => ['birth', 'anniv', 'wed', 'grad', 'baby', 'thanks'].indexOf(v) >= 0).slice(0, 6)
+    occ: (Array.isArray(x && x.occ) ? x.occ : []).map(v => String(v || '')).filter(v => ['birth', 'anniv', 'wed', 'grad', 'baby', 'thanks'].indexOf(v) >= 0).slice(0, 6),
+    /* photo gallery — mirrors supabase product_images.
+       colorId '' = general shot of the pack, otherwise the pack in that color. */
+    imgs: normImgs(x && x.imgs)
   }));
   s.colors = (Array.isArray(p.colors) && p.colors.length ? p.colors : d.colors).map(c => ({
     id: String(c && c.id || uid()), ar: sanitize(c && c.ar, 40) || 'لون', fr: sanitize(c && c.fr, 40), en: sanitize(c && c.en, 40),
-    hex: isHexColor(c && c.hex) ? c.hex : '#C8102E', available: !!(c && c.available)
+    hex: isHexColor(c && c.hex) ? c.hex : '#C8102E', available: !!(c && c.available),
+    /* real close-up photo of this color; hex above stays the fallback tint */
+    img: sanitizeUrl(c && c.img)
   }));
   s.addons = (Array.isArray(p.addons) && p.addons.length ? p.addons : d.addons).map(a => ({
     id: String(a && a.id || uid()), icon: sanitize(a && a.icon, 8) || '',
@@ -354,6 +400,34 @@ function prodDesc(p) { return (lang === 'fr' && p.dfr) ? p.dfr : (lang === 'en' 
 function catName(c) { return (lang === 'fr' && c.fr) ? c.fr : (lang === 'en' && c.en) ? c.en : c.ar; }
 function colorName(c) { return (lang === 'fr' && c.fr) ? c.fr : (lang === 'en' && c.en) ? c.en : c.ar; }
 function addonName(a) { return (lang === 'fr' && a.fr) ? a.fr : (lang === 'en' && a.en) ? a.en : a.ar; }
+/* ---------- photos ----------
+   Resolution order for "show me this pack in this colour":
+     1. primary photo tagged with that colour
+     2. any photo tagged with that colour
+     3. the pack's general primary photo
+     4. any general photo
+   Returns null when the pack has no photo at all — callers then draw the
+   SVG mockup, so a half-photographed catalogue still looks finished. */
+function prodImgs(p, colorId) {
+  const all = (p && Array.isArray(p.imgs)) ? p.imgs : [];
+  if (!colorId) return all.filter(im => !im.colorId);
+  return all.filter(im => im.colorId === colorId);
+}
+function prodImg(p, colorId) {
+  const pick = list => list.find(im => im.primary) || list[0] || null;
+  return (colorId ? pick(prodImgs(p, colorId)) : null) || pick(prodImgs(p, '')) || null;
+}
+function hasProdImg(p) { return !!(p && Array.isArray(p.imgs) && p.imgs.length); }
+/* Gallery for the product page: the chosen colour's shots first, then the
+   general ones, de-duplicated by url. */
+function prodGallery(p, colorId) {
+  const out = [], seen = {};
+  for (const im of prodImgs(p, colorId).concat(prodImgs(p, ''))) {
+    if (seen[im.url]) continue;
+    seen[im.url] = 1; out.push(im);
+  }
+  return out;
+}
 function zoneName(z) { return (lang === 'fr' && z.fr) ? z.fr : (lang === 'en' && z.en) ? z.en : z.ar; }
 function money(n) { return (Number(n) % 1 === 0 ? Number(n) : Number(n).toFixed(2)) + ' ' + S.settings.currency; }
 function prodRating(pid) {

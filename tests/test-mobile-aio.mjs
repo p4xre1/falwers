@@ -103,7 +103,7 @@ async function load(page, opts = {}) {
   const dom = new JSDOM(rd('admin/faq.html'), { url: 'http://localhost:8080/admin/faq.html', runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc, beforeParse(w) { w.localStorage.setItem('rbm_v2_state', JSON.stringify(seed)); w.sessionStorage.setItem('rbm_admin', '1'); w.sessionStorage.setItem('rbm_admin_ts', String(Date.now())); } });
   await sleep(1000);
   const d = dom.window.document;
-  A('admin faq: 14 nav tabs', d.querySelectorAll('#adSide .ad-tab').length === 14);
+  A('admin faq: 15 nav tabs', d.querySelectorAll('#adSide .ad-tab').length === 15);
   A('admin faq: seeded row rendered (6 inputs)', d.querySelectorAll('#faqAdmList .faq-adm-row input').length === 6);
   d.getElementById('faqBulk').value = '\u0647\u0644 \u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645\u061f :: \u0646\u0639\u0645 \u0646\u062f\u0641\u0639 \u0646\u0642\u062f\u0627 :: Pay \u00e0 la livraison ? :: Oui en esp\u00e8ces';
   d.getElementById('faqBulkGo').click();

@@ -23,7 +23,9 @@ wrangler.toml       Cloudflare Pages config (deploys public/)
 │   ├── og-image.jpg        Social thumbnail
 │   ├── robots.txt          Allows humans + AI crawlers (GPTBot, ClaudeBot, PerplexityBot…)
 │   ├── llms.txt / llms-full.txt / ai.txt      AI-discovery layer (generated)
-│   ├── sitemap.xml / ai-sitemap.xml           Standard + AI-annotated sitemaps (generated)
+│   ├── sitemap.xml / ai-sitemap.xml           Standard + curated AI sitemap (generated)
+│   ├── .well-known/{ai-plugin,openapi}.json   ChatGPT manifests (generated; mirrored at root)
+│   ├── ai.html                                Public /ai index of every AI/SEO file
 │   ├── _headers            Cloudflare security/robots headers
 │   ├── _redirects          /index.html → /  (canonical home URL)
 │   ├── img/                Photography (unbranded)
@@ -39,23 +41,55 @@ wrangler.toml       Cloudflare Pages config (deploys public/)
 │   ├── generate-llms-enhanced.mjs   llms.txt + llms-full.txt + ai.txt
 │   ├── optimize-ai-seo.mjs          robots + sitemaps + geo/JSON-LD injection + audit
 │   └── load-catalog.mjs             vm-loads the live catalog from data.js
-├── supabase/           OPTIONAL future backend (config, schema, docs)
+├── supabase/           OPTIONAL backend — real product/colour photos
+│   ├── migrations/0001_init.sql     catalog + orders + reviews schema
+│   └── migrations/0002_media.sql    photo storage (see supabase/README.md)
 └── .vscode/            Editor settings + recommended extensions```
+
+## 📸 Real photos instead of mockups
+
+Packs and colours ship as hand-drawn SVG mockups. To use real photography, paste
+`supabase/migrations/0002_media.sql` into the Supabase SQL editor, then connect the
+project in **Admin → Settings → Supabase**. Upload photos per pack, and optionally per
+pack **+ colour**, in Admin → Products; upload colour close-ups in Admin → Colours.
+
+Anything without a photo keeps its mockup, so you can photograph the catalogue one item
+at a time. Full details and the resolution order: [`supabase/README.md`](supabase/README.md).
 
 ## 🤖 AI / SEO tooling (no dependencies)
 
 ```bash
 node scripts/generate-llms-enhanced.mjs   # rebuilds llms.txt, llms-full.txt, ai.txt from the live catalog
-node scripts/optimize-ai-seo.mjs          # rebuilds robots.txt + sitemap.xml + ai-sitemap.xml, injects geo/JSON-LD, audits pages
+node scripts/optimize-ai-seo.mjs          # rebuilds robots.txt + sitemaps + .well-known manifests, injects geo/JSON-LD, audits pages
 npm run optimize                          # both
 ```
 
-- `SITE_URL=https://your-domain.com node scripts/optimize-ai-seo.mjs` overrides the domain (default `https://rosebymarry.com`).
+### Published files
+
+| File | Purpose |
+|---|---|
+| `/llms.txt` | Concise index: every page + the whole catalog with prices |
+| `/llms-full.txt` | Full reference: trilingual catalog, colors, builder, policies, FAQ |
+| `/ai.txt` | What may be quoted, what is off-limits, attribution |
+| `/robots.txt` | 20+ AI crawlers explicitly allowed + sitemap/llms pointers |
+| `/sitemap.xml` | Every public route incl. one URL per rose |
+| `/ai-sitemap.xml` | **Curated** short reading list — content pages only, priority-ordered |
+| `/.well-known/ai-plugin.json` · `/openapi.json` | ChatGPT manifests (mirrored at the site root for older links) |
+| `/mcp.json` | MCP discovery catalog |
+| **`/ai`** | Human-readable page listing all of the above (linked in the footer) |
+| Admin → **ملفات AI و SEO** | Same list inside the CMS, one click to open each file |
+
+- **Facts vs. wording:** every number (colors, prices, fees, phone, tiers) is read from the live catalog in `public/assets/js/data.js`; only editorial sentences live in `src/content/ai-copy.js`. This is why re-running the generators can no longer downgrade the published files.
+- Every route needs an entry in `src/pages/` — a missing one used to crash both generators. `tests/test-ai-seo.mjs` now asserts the registry is complete.
+- Head injection is idempotent: a block is skipped when our `RBM-SEO:*` marker **or** an equivalent hand-written tag is already present (previously it duplicated canonicals/JSON-LD on hand-authored pages).
+- `_headers` serves the AI layer as `text/plain`/`application/json` with `Access-Control-Allow-Origin: *` so assistants can fetch it cross-origin.
+- `SITE_URL=https://your-domain.com npm run optimize` overrides the domain (default `https://rosebymarry.com`).
 - Home resolves at `/` (nav + brand + breadcrumbs link to `/`; `_redirects` 301s `/index.html`).
 - All runtime URLs live in one registry: `LINKS` in `public/assets/js/ui.js`.
-- Head injection is idempotent (marker comments `RBM-SEO:*`), safe to re-run after edits.
 - Product pages emit runtime `Product` JSON-LD (name, price MAD, availability, URL).
 - Geo: `geo.region MA-TNG`, ICBM coordinates, Tangier `areaServed` in schema.org data.
+
+> After changing products or prices, run `npm run optimize` so the AI layer matches the storefront, then redeploy.
 
 ## 🚀 Deploy
 

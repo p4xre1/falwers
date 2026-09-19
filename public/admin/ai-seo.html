@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; manifest-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
-<title>Products — Admin CMS | Rose by Marry</title>
+<title>ملفات AI و SEO — Admin CMS | Rose by Marry</title>
 <meta name="theme-color" content="#470D1B">
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../assets/img/favicon.ico" sizes="32x32">
@@ -17,30 +17,20 @@
 <link rel="stylesheet" href="../assets/css/style.css?v=84">
 <link rel="stylesheet" href="assets/admin.css?v=84">
 </head>
-<body data-page="admin-products" data-admin-page="products">
+<body data-page="admin-settings" data-admin-page="aiseo">
 <noscript><p style="background:#A03A3A;color:#fff;padding:14px 18px;text-align:center">This page requires JavaScript. / تتطلب هذه الصفحة تفعيل JavaScript.</p></noscript>
 
 <header class="ad-head" id="adHead"></header>
 <div class="ad-body">
   <nav class="ad-side" id="adSide" aria-label="Admin sections"></nav>
   <main class="ad-main">
-    <div class="pane act">
-      <div class="pane-head"><h3 data-i18n="tab_products">المنتجات</h3>
-        <button class="btn btn-wine btn-sm" id="addCat" type="button">＋ <span data-i18n="add_cat">فئة جديدة</span></button>
-        <button class="btn btn-primary btn-sm" id="addProd" type="button">＋ <span data-i18n="add_prod">منتج جديد</span></button>
-      </div>
-      <div class="set-card"><h4 data-i18n="th_cat">الفئة</h4><div id="catsList"></div></div>
-      <div class="set-card"><h4 data-i18n="th_prod">المنتج</h4><div id="prodList"></div></div>
-      <div class="set-card"><h4 data-i18n="builder_t">أحجام «اصنع باقتك»</h4>
-        <p class="hintline" style="margin-bottom:10px" data-i18n="tiers_hint">عدّل الكمية أو السعر مباشرة — يُحفظ تلقائياً.</p>
-        <button class="btn btn-primary btn-sm" id="addTier" type="button" style="margin-bottom:10px">＋ <span data-i18n="add_tier">حجم جديد</span></button>
-        <div id="tiersList"></div>
-      </div>
-      <div class="set-card"><h4 data-i18n="d_addons_q">الإضافات</h4>
-        <button class="btn btn-primary btn-sm" id="addAddon" type="button" style="margin-bottom:10px">＋ <span data-i18n="d_addons_q">الإضافات</span></button>
-        <div id="addonsList"></div>
-      </div></div>
-  </main>
+    <div class="set-card">
+      <h4 data-i18n="aip_t">AI &amp; SEO files</h4>
+      <p class="set-sub" data-i18n="aiadm_sub"></p>
+      <div id="aiSeoList" style="display:flex;flex-direction:column;gap:6px"></div>
+      <p class="set-sub" style="margin-top:14px" data-i18n="aiadm_note"></p>
+    </div>
+  </main></main>
 </div>
 
 
@@ -82,7 +72,6 @@
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script src="../assets/js/i18n.js?v=84"></script>
 <script src="../assets/js/data.js?v=84"></script>
-<script src="../assets/js/supabase.js?v=84"></script>
 <script src="../assets/js/ui.js?v=84"></script>
 <script src="assets/admin.js?v=84"></script>
 <script src="assets/errbar.js?v=84"></script>

@@ -33,7 +33,7 @@ async function loadAdmin(page, seedFn) {
   const { w, d, errs } = await loadAdmin('index', seed);
   d.getElementById('pcUser').value = 'marry'; d.getElementById('pcInput').value = '1234'; await sleep(1350); d.getElementById('pcGo').click(); await sleep(150);
   A('gate: unlocks', !d.body.classList.contains('gated'));
-  A('tabs: 14 pages (faq added)', d.querySelectorAll('#adSide .ad-tab').length === 14);
+  A('tabs: 15 pages (ai-seo added)', d.querySelectorAll('#adSide .ad-tab').length === 15);
   A('tabs: label-only, no emoji', !/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(d.querySelector('#adSide').textContent));
   A('gate/dash: no runtime errors', errs.length === 0); if (errs.length) console.log(errs.join('\n'));
   w.close();

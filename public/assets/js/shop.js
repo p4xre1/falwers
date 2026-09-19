@@ -273,7 +273,7 @@ function initBuilder() {
         type: 'button', disabled: c.available ? null : true,
         onclick: () => { if (c.available) { selB.colorId = c.id; renderColors(); refreshArt(); renderSum(); } }
       },
-        el('span', { class: 'dot', style: { background: 'radial-gradient(circle at 35% 30%, ' + lighten(c.hex, .35) + ', ' + c.hex + ' 70%, ' + darken(c.hex, .18) + ')' } }),
+        el('span', { class: 'dot', style: colorDotCss(c) }),
         el('span', { class: 'nm' }, colorName(c))
       ));
     }
@@ -490,6 +490,28 @@ function pageProduct() {
   const rating = prodRating(p.id);
   const cat = S.categories.find(c => c.id === p.cat);
 
+  /* Thumbnail strip under the main photo. Silent no-op when the pack has no
+     photos (or only one), so mockup-only products look exactly as before. */
+  function pdRenderThumbs(prod, colorId) {
+    const box = $('#pdThumbs');
+    if (!box) return;
+    box.textContent = '';
+    const shots = (typeof prodGallery === 'function') ? prodGallery(prod, colorId || '') : [];
+    if (shots.length < 2) { box.classList.remove('on'); return; }
+    box.classList.add('on');
+    shots.forEach((im, i) => {
+      const b = el('button', {
+        type: 'button', class: 'pd-th' + (i === 0 ? ' on' : ''),
+        'aria-label': im.alt || prodName(prod),
+        onclick: () => {
+          const art = $('#pdArt');
+          if (art) art.innerHTML = '<img class="art-photo" src="' + escAttr(im.url) + '" alt="' + escAttr(im.alt || prodName(prod)) + '" decoding="async">';
+          $$('#pdThumbs .pd-th').forEach(x => x.classList.toggle('on', x === b));
+        }
+      }, el('img', { src: im.url, alt: im.alt || prodName(prod), loading: 'lazy', decoding: 'async' }));
+      box.append(b);
+    });
+  }
   function renderAll() { renderMain(); renderAddons(); renderReviews(); renderRelated(); }
   function renderMain() {
     const c = colorById(st.colorId) || S.colors[0];
@@ -502,7 +524,10 @@ function pageProduct() {
         el('span', { class: 'sep' }, '›'), el('span', {}, prodName(p))
       ),
       el('div', { class: 'pd-grid' },
-        el('div', { class: 'pd-art', id: 'pdArt' }, (() => { const w = el('div'); w.innerHTML = productArt(p, c ? c.hex : '#C8102E'); return w.firstElementChild; })()),
+        el('div', { class: 'pd-media' },
+          el('div', { class: 'pd-art', id: 'pdArt' }, (() => { const w = el('div'); w.innerHTML = productArt(p, c ? c.hex : '#C8102E', c ? c.id : ''); return w.firstElementChild; })()),
+          el('div', { class: 'pd-thumbs', id: 'pdThumbs' })
+        ),
         el('div', { class: 'pd-info' },
           el('span', { class: 'pc-cat' }, cat ? cat.icon + ' ' + catName(cat) : ''),
           el('h1', {}, prodName(p)),
@@ -533,9 +558,9 @@ function pageProduct() {
                 box.append(el('button', {
                   class: 'sw' + (st.colorId === cc.id ? ' sel' : '') + (cc.available ? '' : ' off'),
                   type: 'button', disabled: cc.available ? null : true,
-                  onclick: () => { if (!cc.available) return; st.colorId = cc.id; const art = $('#pdArt'); art.innerHTML = productArt(p, cc.hex); $$('#pdColors .sw').forEach(b => b.classList.toggle('sel', b === arguments[0])); renderColorsSel(cc.id); }
+                  onclick: () => { if (!cc.available) return; st.colorId = cc.id; const art = $('#pdArt'); art.innerHTML = productArt(p, cc.hex, cc.id); pdRenderThumbs(p, cc.id); $$('#pdColors .sw').forEach(b => b.classList.toggle('sel', b === arguments[0])); renderColorsSel(cc.id); }
                 },
-                  el('span', { class: 'dot', style: { background: 'radial-gradient(circle at 35% 30%, ' + lighten(cc.hex, .35) + ', ' + cc.hex + ' 70%, ' + darken(cc.hex, .18) + ')' } }),
+                  el('span', { class: 'dot', style: colorDotCss(cc) }),
                   el('span', { class: 'nm' }, colorName(cc))
                 ));
               }
@@ -621,6 +646,7 @@ function pageProduct() {
         + '💰 *المبلغ الإجمالي:* ' + money((p.price + addons.reduce((s, a) => s + a.price, 0)) * st.qty) + '\n' + L2;
       openWa(msg);
     });
+    pdRenderThumbs(p, st.colorId);
   }
   function renderColorsSel(id) { $$('#pdColors .sw').forEach((b, i) => b.classList.toggle('sel', S.colors[i] && S.colors[i].id === id)); }
   function renderAddons() {
@@ -727,7 +753,7 @@ function pageCart() {
       const p = it.custom ? null : prodById(it.pid);
       const c = it.colorId ? colorById(it.colorId) : null;
       const name = it.custom ? t('base_lbl') + ' — ' + it.custom.qty + ' ' + t('units') : (p ? prodName(p) : '—');
-      const artHTML = it.custom ? bouquetArt(c ? c.hex : '#C8102E', it.custom.qty, true) : (p ? productArt(p, c ? c.hex : '#C8102E') : '');
+      const artHTML = it.custom ? bouquetArt(c ? c.hex : '#C8102E', it.custom.qty, true) : (p ? productArt(p, c ? c.hex : '#C8102E', c ? c.id : '') : '');
       const extras = (it.addons || []).map(aid => { const a = addonById(aid); return a ? addonName(a) : ''; }).filter(Boolean).join('، ');
       const line = el('div', { class: 'cartline' },
         el('div', { class: 'cl-art' }, (() => { const w = el('div'); w.innerHTML = artHTML; return w.firstElementChild || w; })()),
@@ -813,7 +839,7 @@ function pageCart() {
       xs.forEach(x => {
         const chip = el('div', { class: 'xs-chip' });
         const aw = el('span', { class: 'xs-art' });
-        aw.innerHTML = productArt(x, xc ? xc.hex : '#C8102E');
+        aw.innerHTML = productArt(x, xc ? xc.hex : '#C8102E', xc ? xc.id : '');
         const ab = el('button', { class: 'xs-add', type: 'button', 'aria-label': t('add_cart_s') }, '+');
         ab.addEventListener('click', () => { CART.add({ key: uid(), pid: x.id, colorId: xc ? xc.id : null, qty: 1, addons: [], note: '' }); updateBadges(); toast(t('added_to_cart'), 'ok'); render(); });
         chip.append(aw, el('span', { class: 'xs-name' }, prodName(x), el('small', {}, money(x.price))), ab);
@@ -1247,6 +1273,59 @@ function pageOffers() {
 }
 
 /* ============================================================
+   PAGE: ai (public index of the AI/SEO discovery layer)
+   Mirrors the files produced by scripts/{generate-llms-enhanced,optimize-ai-seo}.mjs.
+   Grouped by purpose so a human can scan it and an assistant can follow the links.
+   ============================================================ */
+const AI_FILES = [
+  { g: 'aip_k_llms', items: [
+    { path: '/llms.txt', ar: 'فهرس مختصر لكل الصفحات والمنتجات — لـ ChatGPT و Perplexity و Claude.', fr: 'Index concis de toutes les pages et produits — pour ChatGPT, Perplexity, Claude.', en: 'Concise index of every page and product — for ChatGPT, Perplexity, Claude.' },
+    { path: '/llms-full.txt', ar: 'المرجع الكامل: الكتالوج بثلاث لغات، الألوان، الباني، سياسات التوصيل والأسئلة.', fr: 'Référence complète : catalogue trilingue, couleurs, bouquet libre, politiques et FAQ.', en: 'Full reference: trilingual catalog, colors, builder, policies and FAQ.' }
+  ] },
+  { g: 'aip_k_policy', items: [
+    { path: '/ai.txt', ar: 'ما يُسمح باقتباسه وما هو مستثنى، مع طريقة الإسناد الصحيحة.', fr: 'Ce qui peut être cité ou non, et l’attribution attendue.', en: 'What may be quoted or not, and the expected attribution.' },
+    { path: '/robots.txt', ar: 'سماح صريح لأكثر من 20 زاحفاً (GPTBot، ClaudeBot، PerplexityBot…) + روابط الخرائط.', fr: 'Autorisation explicite de 20+ crawlers (GPTBot, ClaudeBot, PerplexityBot…) + plans de site.', en: 'Explicit allowance for 20+ crawlers (GPTBot, ClaudeBot, PerplexityBot…) + sitemap links.' }
+  ] },
+  { g: 'aip_k_sitemap', items: [
+    { path: '/sitemap.xml', ar: 'كل المسارات العامة بما فيها رابط خاص لكل وردة.', fr: 'Toutes les routes publiques, dont un lien par rose.', en: 'Every public route, including one link per rose.' },
+    { path: '/ai-sitemap.xml', ar: 'قائمة قراءة قصيرة: صفحات المحتوى فقط، بترتيب الأولوية.', fr: 'Liste de lecture courte : pages de contenu, par ordre de priorité.', en: 'Short reading list: content pages only, in priority order.' }
+  ] },
+  { g: 'aip_k_manifest', items: [
+    { path: '/.well-known/ai-plugin.json', ar: 'مانيفست إضافة ChatGPT (نسخة أيضاً في الجذر).', fr: 'Manifeste de plugin ChatGPT (copie aussi à la racine).', en: 'ChatGPT plugin manifest (also mirrored at the root).' },
+    { path: '/.well-known/openapi.json', ar: 'وصف OpenAPI للموارد العامة — قراءة فقط.', fr: 'Description OpenAPI des ressources publiques — lecture seule.', en: 'OpenAPI description of the public resources — read-only.' },
+    { path: '/mcp.json', ar: 'كتالوج MCP لربط المساعدات الذكية بالمتجر.', fr: 'Catalogue MCP pour connecter les assistants IA.', en: 'MCP catalog for connecting AI assistants.' }
+  ] }
+];
+function pageAi() {
+  const box = $('#aiFiles');
+  if (!box) return;
+  box.textContent = '';
+  for (const group of AI_FILES) {
+    box.append(el('h2', { class: 'section-title', style: { fontSize: '1.2rem', marginTop: '26px' } }, t(group.g)));
+    const grid = el('div', { class: 'care-grid', style: { marginTop: '14px' } });
+    for (const f of group.items) {
+      const desc = f[lang] || f.en;
+      const card = el('article', { class: 'care-card' },
+        el('h3', {}, el('em', { class: 'ltr', style: { direction: 'ltr', unicodeBidi: 'embed' } }, f.path)),
+        el('p', {}, desc),
+        el('div', { class: 'off-code', style: { marginTop: '10px' } },
+          el('a', { class: 'btn btn-sm', href: '.' + f.path, target: '_blank', rel: 'noopener noreferrer' }, t('aip_open')),
+          el('button', {
+            class: 'btn btn-sm btn-outline', type: 'button',
+            onclick: () => {
+              try { if (navigator.clipboard) navigator.clipboard.writeText(location.origin + f.path); } catch (e) {}
+              toast(t('aip_copied'), 'ok');
+            }
+          }, t('aip_copy'))
+        )
+      );
+      grid.append(card);
+    }
+    box.append(grid);
+  }
+}
+
+/* ============================================================
    PAGE: faq (CMS-driven FAQ list + schema override)
    ============================================================ */
 function pageFaq() {
@@ -1295,6 +1374,7 @@ function pageFaq() {
     search: pageSearch,
     offers: pageOffers,
     faq: pageFaq,
+    ai: pageAi,
     occasions: function () {},
     care: function () {},
     sizeguide: function () {},

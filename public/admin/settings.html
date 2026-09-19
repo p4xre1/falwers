@@ -82,6 +82,27 @@
         </div>
       </div>
       <div class="set-card">
+        <h4 data-i18n="sb_t">Supabase (صور حقيقية)</h4>
+        <p class="hintline" data-i18n="sb_sub"></p>
+        <div class="stor-line"><span class="seo-row" id="sbStatus"></span></div>
+        <div class="set-grid">
+          <div class="fld"><label for="sb_url" data-i18n="sb_url">رابط المشروع</label><input id="sb_url" type="url" class="ltr" placeholder="https://xxxx.supabase.co" maxlength="200" autocomplete="off"></div>
+          <div class="fld"><label for="sb_bucket" data-i18n="sb_bucket">اسم الحاوية</label><input id="sb_bucket" type="text" class="ltr" placeholder="media" maxlength="60" autocomplete="off"></div>
+        </div>
+        <div class="fld"><label for="sb_key" data-i18n="sb_key">المفتاح العام anon</label><input id="sb_key" type="text" class="ltr" maxlength="400" autocomplete="off"><p class="hintline" data-i18n="sb_hint"></p></div>
+        <button class="btn btn-wine btn-sm" id="sbSave" type="button" data-i18n="btn_save_set">حفظ الإعدادات</button>
+        <div class="set-grid" style="margin-top:14px">
+          <div class="fld"><label for="sb_email" data-i18n="sb_email">البريد الإلكتروني</label><input id="sb_email" type="email" class="ltr" autocomplete="off"></div>
+          <div class="fld"><label for="sb_pass" data-i18n="sb_pass">كلمة المرور</label><input id="sb_pass" type="password" autocomplete="new-password"></div>
+        </div>
+        <div class="data-actions">
+          <button class="btn btn-primary btn-sm" id="sbLogin" type="button" data-i18n="sb_login">تسجيل الدخول</button>
+          <button class="btn btn-outline btn-sm" id="sbPull" type="button" data-i18n="sb_pull">سحب الصور</button>
+          <button class="btn btn-outline btn-sm" id="sbLogout" type="button" data-i18n="sb_logout">خروج</button>
+        </div>
+      </div>
+
+      <div class="set-card">
         <h4 data-i18n="seo_t">SEO — Robots & Sitemap</h4>
         <p class="hintline" data-i18n="seo_d">عند نشر الموقع، ضع محتوى robots.txt و sitemap.xml التاليين في جذر الموقع.</p>
         <div class="seo-box"><label data-i18n="lbl_robots">robots.txt</label><textarea id="robotsOut" readonly></textarea>
@@ -131,6 +152,7 @@
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script src="../assets/js/i18n.js?v=84"></script>
 <script src="../assets/js/data.js?v=84"></script>
+<script src="../assets/js/supabase.js?v=84"></script>
 <script src="../assets/js/ui.js?v=84"></script>
 <script src="assets/admin.js?v=84"></script>
 <script src="assets/errbar.js?v=84"></script>
