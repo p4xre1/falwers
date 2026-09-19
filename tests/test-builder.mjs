@@ -1,9 +1,11 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); if (!c) process.exitCode = 1; };
-const html = fs.readFileSync('/home/user/rose-by-marry/public/index.html', 'utf8');
+const html = fs.readFileSync(PUB + '/index.html', 'utf8');
 const SEED = { settings: { whatsapp: '212772966980', currency: 'DH', siteUrl: '', passHash: null, freeShip: 500, builderUnit: 9 }, categories: [{ id: 'bouq', icon: '', ar: 'باقات', fr: 'B', en: 'B' }], products: [{ id: 'amour', cat: 'bouq', type: 'bouquet', qty: 10, ar: 'أ', fr: 'B', en: 'A', dar: '', dfr: '', den: '', price: 90, old: 0, badge: '', featured: true, active: true }], colors: [{ id: 'red', ar: 'أحمر', fr: 'Rouge', en: 'Red', hex: '#C8102E', available: true }, { id: 'blue', ar: 'أزرق', fr: 'Bleu', en: 'Blue', hex: '#3A5FA8', available: true }, { id: 'darkred', ar: 'أحمر داكن', fr: 'Rouge foncé', en: 'Dark Red', hex: '#6E1423', available: true }], addons: [{ id: 'crown', icon: '', ar: 'تاج', fr: 'Couronne', en: 'Crown', price: 20, hasText: false, enabled: true }], builderTiers: [{ id: 'b1', qty: 1, price: 10 }, { id: 'b5', qty: 5, price: 45 }, { id: 'b10', qty: 10, price: 90 }, { id: 'b15', qty: 15, price: 135 }, { id: 'b20', qty: 20, price: 180 }, { id: 'b30', qty: 30, price: 270 }], zones: [{ id: 'tanger', ar: 'طنجة', fr: 'T', en: 'T', fee: 20 }], promoCodes: [], discounts: [], reviews: [], orders: [], pageviews: {}, prodViews: {} };
 const vc = new VirtualConsole();
 const dom = new JSDOM(html, { url: 'http://localhost:8080/', runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc, beforeParse(w) { w.localStorage.setItem('rbm_v2_state', JSON.stringify(SEED)); } });

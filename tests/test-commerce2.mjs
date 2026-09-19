@@ -1,10 +1,12 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const PRODS = [
   { id: 'amour', cat: 'bouq', type: 'bouquet', qty: 10, ar: 'باقة أمور', fr: 'Bouquet Amour', en: 'Amour Bouquet', price: 90, old: 0, badge: 'best', featured: true, active: true },
   { id: 'single', cat: 'gift', type: 'single', qty: 1, ar: 'وردة مفردة', fr: 'Rose Unique', en: 'Single Rose', price: 15, old: 0, badge: '', featured: false, active: true },
@@ -81,7 +83,7 @@ const mk = async (page, { q = '', ls = {}, seed = {} } = {}) => {
 }
 /* sw + admin fields */
 {
-  A('sw.js exists and registers only on storefront', fs.existsSync('/home/user/rose-by-marry/public/sw.js') && rd('assets/js/ui.js').includes("navigator.serviceWorker.register('sw.js')"));
+  A('sw.js exists and registers only on storefront', fs.existsSync(PUB + '/sw.js') && rd('assets/js/ui.js').includes("navigator.serviceWorker.register('sw.js')"));
   const s = rd('admin/settings.html');
   A('admin: instagram/tiktok settings fields', s.includes('id="set_ig"') && s.includes('id="set_tt"'));
   A('seed: real WhatsApp in defaults', rd('assets/js/data.js').includes("whatsapp: '212772966980'"));

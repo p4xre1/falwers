@@ -1,11 +1,13 @@
 /* Tangier heritage layer: two-seas divider, history timeline, city colors */
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const i18n = rd('assets/js/i18n.js'), data = rd('assets/js/data.js'), css = rd('assets/css/style.css');
 /* static checks */
 A('i18n: heritage keys in AR + FR + EN', i18n.includes('طنجة حيث يلتقي البحران') && i18n.includes('où se rencontrent les deux mers') && i18n.includes('where the two seas meet'));

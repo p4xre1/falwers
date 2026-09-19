@@ -6,6 +6,16 @@
 /* ---------- DOM helpers ---------- */
 function $(s, r) { return (r || document).querySelector(s); }
 function $$(s, r) { return Array.from((r || document).querySelectorAll(s)); }
+/* Parse a trusted HTML string (widget markup, procedural art, icons) into nodes.
+   Never feed it user input — everything user-supplied goes through sanitize(). */
+function htmlFrag(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = String(html == null ? '' : html);
+  return tpl.content;
+}
+/* Widget markup the UI kit generates itself. Kept as a narrow allow-list so a
+   stray user string can never be re-parsed as HTML. */
+var TRUSTED_MARKUP = /^\s*<(svg|span|code|b|i|em|strong|br)\b/i;
 function el(tag, attrs) {
   const n = document.createElement(tag);
   if (attrs) for (const k of Object.keys(attrs)) {
@@ -18,8 +28,11 @@ function el(tag, attrs) {
   }
   for (let i = 2; i < arguments.length; i++) {
     const kid = arguments[i];
-    if (kid == null) continue;
-    n.append(kid.nodeType ? kid : document.createTextNode(kid));
+    if (kid == null || kid === false) continue;
+    if (kid.nodeType) n.append(kid);
+    /* guard: an HTML string child must become markup, never literal on-screen code */
+    else if (typeof kid === 'string' && TRUSTED_MARKUP.test(kid)) n.append(htmlFrag(kid));
+    else n.append(document.createTextNode(String(kid)));
   }
   return n;
 }
@@ -205,11 +218,30 @@ function starsHTML(avg) {
   for (let i = 1; i <= 5; i++) s += i <= full ? '✦' : '✧';
   return '<span class="stars" aria-hidden="true">' + s + '</span>';
 }
+/* DOM twin of starsHTML() — use this with el()/append() so the star row is real
+   markup instead of printed source code. */
+function starsEl(avg) {
+  const w = document.createElement('div');
+  w.innerHTML = starsHTML(Number(avg) || 0);
+  return w.firstElementChild;
+}
+/* DOM twin of heartSvg. */
+function heartEl() {
+  const w = document.createElement('div');
+  w.innerHTML = heartSvg;
+  return w.firstElementChild;
+}
 var heartSvg = '<svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5C7 16.5 3.5 13.2 3.5 9.6 3.5 7 5.5 5 8 5c1.6 0 3.1.9 4 2.2C12.9 5.9 14.4 5 16 5c2.5 0 4.5 2 4.5 4.6 0 3.6-3.5 6.9-8.5 10.9Z"/></svg>';
 var LINKS = {
   home: '/',
   shop: 'shop.html',
-  product: function (p) { return 'product.html?id=' + encodeURIComponent((p && p.slug) || (p && p.id) || ''); },
+  product: function (p) {
+    if (!p) return 'product.html?id=';
+    /* canonical URL = slug (falls back to a freshly computed one for state saved
+       before slugs existed, then to the raw id) */
+    const key = p.slug || slugify(p.fr || p.en || p.ar || p.id) || p.id;
+    return 'product.html?id=' + encodeURIComponent(key);
+  },
   cart: 'cart.html',
   checkout: 'checkout.html',
   wishlist: 'wishlist.html',
@@ -247,7 +279,7 @@ function trackVisit() {
     S.pageviews = S.pageviews || {};
     S.pageviews[pg === 'product' ? 'product:' + q : pg] = (S.pageviews[pg === 'product' ? 'product:' + q : pg] || 0) + 1;
     if (pg === 'product') {
-      const p = prodById(q) || S.products.find(x => x.slug && x.slug === q);
+      const p = prodBySlug(q);
       if (p) { S.prodViews = S.prodViews || {}; S.prodViews[p.id] = (S.prodViews[p.id] || 0) + 1; }
     }
     _tsv();

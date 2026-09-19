@@ -1098,3 +1098,45 @@ img,svg,video{max-width:100%;height:auto}
 /* v22 — scroll hardening: never let an invisible overlay eat input */
 .wel-ovl:not(.show){visibility:hidden;pointer-events:none}
 .mbk:not(.open){visibility:hidden}
+
+/* ============ v23 — SCROLL FIX (desktop + phone) ============
+   Symptom: the page would not scroll with wheel, trackpad, keyboard or touch.
+   Cause: `body{overflow-x:hidden}` (line 28) turned <body> into a scroll container
+   (when one axis is not `visible`, the other computes to `auto`), while
+   `html{overflow-x:clip}` blocked body's overflow from propagating to the viewport.
+   The document therefore had two competing scroll boxes: the viewport had nothing
+   to scroll and <body> was exactly as tall as its content, so every scroll input
+   died. It also killed position:sticky (masthead + product art).
+   Fix: one scroller — the viewport — and `clip` (which never creates a scroll
+   container) for the horizontal-drift guard. */
+html{overflow-x:clip;overflow-y:auto;scroll-behavior:smooth;scroll-padding-top:96px;overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
+body{overflow-x:clip;overflow-y:visible;min-height:100vh;touch-action:manipulation;-webkit-overflow-scrolling:touch}
+@supports not (overflow:clip){
+  html{overflow-x:hidden}
+  body{overflow-x:hidden}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* 2. `background-attachment:fixed` on <body> repaints the whole page on every
+      scroll frame; on iOS/Android it is the classic "scroll freezes / stutters"
+      trigger (and iOS ignores it anyway). Keep the fixed glow on pointers only. */
+@media (hover:none),(pointer:coarse){
+  body:not([data-page^="admin-"]){background-attachment:scroll}
+}
+
+/* 3. a hidden full-screen layer must never swallow wheel, touch or taps */
+.mbk:not(.open),.wel-ovl:not(.show),.admin:not(.open){visibility:hidden;pointer-events:none}
+.wel-ovl.show{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.mcard{overscroll-behavior:contain}
+
+/* 4. the falling-petals layer is decorative: it must never sit in the input path */
+#petals{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+
+/* 5. position:sticky works again now that <body> is not a scroll container:
+      .site-head (masthead) and .pd-art (product artwork) stick to the viewport. */
+
+/* 6. never render a dead-end page shorter than the viewport (nothing to scroll,
+      looks broken). Applies to the product "not found" state and empty carts. */
+main.wrap{min-height:70vh}
+.empty.no-results{padding:clamp(48px,10vh,96px) 20px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.pd-missing-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}

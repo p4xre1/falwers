@@ -1,5 +1,7 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); if (!c) process.exitCode = 1; };
@@ -8,7 +10,7 @@ const load = async (page, seedFn, url) => {
   const vc = new VirtualConsole();
   const errs = [];
   vc.on('jsdomError', e => { const m = String(e.message || e); if (!/not implemented|Could not load/i.test(m)) errs.push(m.slice(0, 160)); });
-  const html = fs.readFileSync('/home/user/rose-by-marry/public/' + page.split('?')[0], 'utf8');
+  const html = fs.readFileSync(PUB + '/' + page.split('?')[0], 'utf8');
   const dom = new JSDOM(html, { url: url || ('http://localhost:8080/' + page), runScripts: 'dangerously', resources: 'usable', pretendToBeVisual: true, virtualConsole: vc, beforeParse(w) { if (seedFn) seedFn(w); } });
   await sleep(950);
   return { w: dom.window, d: dom.window.document, errs };

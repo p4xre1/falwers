@@ -1,10 +1,12 @@
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const i18n = rd('assets/js/i18n.js'), data = rd('assets/js/data.js'), index = rd('index.html');
 const SEED = () => ({ settings: { whatsapp: '212772966980', currency: 'DH', siteUrl: '', passHash: null, freeShip: 500, builderUnit: 9 }, categories: [{ id: 'bouq', icon: '', ar: 'باقات', fr: 'B', en: 'B' }], products: [{ id: 'amour', cat: 'bouq', type: 'bouquet', qty: 10, ar: 'باقة أمور', fr: 'Bouquet Amour', en: 'Amour Bouquet', dar: '', dfr: '', den: '', price: 90, old: 0, badge: 'best', featured: true, active: true }], colors: [{ id: 'red', ar: 'أحمر', fr: 'R', en: 'R', hex: '#C8102E', available: true }], addons: [{ id: 'crown', icon: '', ar: 'تاج', fr: 'C', en: 'C', price: 20, hasText: false, enabled: true }], builderTiers: [{ id: 'b10', qty: 10, price: 90 }], zones: [{ id: 'tanger', ar: 'طنجة', fr: 'T', en: 'T', fee: 20 }], promoCodes: [], discounts: [], reviews: [{ id: 'r1', pid: 'amour', name: 'Salma', rating: 5, text: 'جميل', ts: Date.now() }], orders: [], pageviews: {}, prodViews: {} });
 const dom = async (page, opts = {}) => {

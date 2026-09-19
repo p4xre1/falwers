@@ -117,6 +117,33 @@ function notFound(container, msg) {
   container.append(el('p', { class: 'empty no-results' }, msg));
 }
 
+/* Product-page dead end: a missing/inactive product must still leave a usable,
+   scrollable page with a way back into the shop (never a one-line blank screen). */
+function productMissing(root) {
+  if (!root) return;
+  root.textContent = '';
+  const art = el('div', { style: { width: '96px', margin: '0 auto', opacity: '.9', color: 'var(--wine)' } });
+  art.innerHTML = bouquetArt('#C8102E', 5, true);
+  root.append(
+    el('div', { class: 'empty no-results' },
+      art,
+      el('p', { style: { fontWeight: '700', color: 'var(--wine)' } }, t('no_results')),
+      el('div', { class: 'pd-missing-actions' },
+        el('a', { class: 'btn btn-primary', href: LINKS.shop }, t('nav_shop')),
+        el('a', { class: 'btn btn-outline', href: LINKS.home }, t('nav_home'))
+      )
+    )
+  );
+  const picks = S.products.filter(x => x.active).slice(0, 4);
+  if (picks.length) {
+    root.append(el('h2', { class: 'section-title', style: { fontSize: '1.3rem', margin: '38px 0 16px' } }, t('related')));
+    const grid = el('div', { class: 'grid-prod' });
+    picks.forEach(x => grid.append(productCard(x)));
+    root.append(grid);
+    bindCardActions(grid);
+  }
+}
+
 /* ============================================================
    PAGE: home
    ============================================================ */
@@ -157,7 +184,7 @@ function pageHome() {
     rs.forEach((r, i) => {
       tb.append(el('div', { class: 'tcard reveal' },
         el('div', { class: 'tavatar', style: { backgroundImage: 'url(' + avatars[i % avatars.length] + ')' } }),
-        el('div', { style: { marginBottom: '10px' } }, starsHTML(r.rating)),
+        el('div', { style: { marginBottom: '10px' } }, starsEl(r.rating)),
         el('p', { class: 'tquote' }, '“' + r.text + '”'),
         el('div', { class: 'tname' }, r.name)
       ));
@@ -426,8 +453,8 @@ function pageShop() {
    ============================================================ */
 function pageProduct() {
   let pid = '';
-  try { pid = sanitize(new URL(location.href).searchParams.get('id') || '', 40); } catch (e) {}
-  const p = prodById(pid) || S.products.find(x => x.slug && x.slug === pid) || null;
+  try { pid = sanitize(new URL(location.href).searchParams.get('id') || '', 90); } catch (e) {}
+  const p = prodBySlug(pid);
   try {
     if (p) {
       try { document.title = prodName(p) + ' | ورد ساتان — Rose by Marry'; } catch (e) {}
@@ -455,7 +482,7 @@ function pageProduct() {
     }
   } catch (e) {}
   const root = $('#pdRoot');
-  if (!p || !p.active) { notFound(root, t('no_results')); return; }
+  if (!p || !p.active) { productMissing(root); return; }
 
   const st = { colorId: null, qty: 1, addonSel: {}, note: '' };
   const defC = S.colors.find(c => c.available) || S.colors[0];
@@ -479,7 +506,7 @@ function pageProduct() {
         el('div', { class: 'pd-info' },
           el('span', { class: 'pc-cat' }, cat ? cat.icon + ' ' + catName(cat) : ''),
           el('h1', {}, prodName(p)),
-          el('div', { class: 'pc-rate' }, starsHTML(rating.avg), el('span', {}, rating.n ? rating.avg.toFixed(1) + ' · ' + rating.n + ' ' + t('reviews_t') : '—')),
+          el('div', { class: 'pc-rate' }, starsEl(rating.avg), el('span', {}, rating.n ? rating.avg.toFixed(1) + ' · ' + rating.n + ' ' + t('reviews_t') : '—')),
           el('div', { class: 'pd-price' },
             el('span', {}, money(p.price)),
             p.old > p.price ? el('span', { class: 'op' }, money(p.old)) : el('span')
@@ -535,7 +562,7 @@ function pageProduct() {
             el('button', { class: 'btn btn-primary btn-lg', id: 'pdAddCart', type: 'button' }, t('add_cart')),
             el('button', { class: 'btn btn-outline btn-lg', id: 'pdWa', type: 'button' }, t('buy_wa')),
             el('button', { class: 'btn btn-outline btn-lg', id: 'pdCopy', type: 'button', title: t('btn_copy') }, t('btn_copy')),
-            (() => { const hb = el('button', { class: 'icon-heart' + (WISH.has(p.id) ? ' on' : ''), type: 'button', title: 'wishlist', style: { width: '50px', height: '50px' } }, heartSvg); hb.addEventListener('click', () => { const on = WISH.toggle(p.id); hb.classList.toggle('on', on); updateBadges(); toast(on ? t('wishlist_added') : t('wishlist_removed')); }); return hb; })()
+            (() => { const hb = el('button', { class: 'icon-heart' + (WISH.has(p.id) ? ' on' : ''), type: 'button', title: 'wishlist', 'aria-label': 'wishlist', 'aria-pressed': WISH.has(p.id) ? 'true' : 'false', style: { width: '50px', height: '50px' } }); hb.append(heartEl()); hb.addEventListener('click', () => { const on = WISH.toggle(p.id); hb.classList.toggle('on', on); hb.setAttribute('aria-pressed', on ? 'true' : 'false'); updateBadges(); toast(on ? t('wishlist_added') : t('wishlist_removed')); }); return hb; })()
           )
         )
       ),
@@ -662,7 +689,7 @@ function pageProduct() {
     if (!rs.length) { box.append(el('p', { class: 'empty' }, t('no_reviews'))); return; }
     for (const r of rs) {
       box.append(el('div', { class: 'rev' },
-        el('div', { class: 'rh' }, el('span', { class: 'rn' }, r.name), el('span', {}, starsHTML(r.rating)), el('span', { class: 'rd' }, fmtDate(r.ts))),
+        el('div', { class: 'rh' }, el('span', { class: 'rn' }, r.name), starsEl(r.rating), el('span', { class: 'rd' }, fmtDate(r.ts))),
         el('p', {}, r.text)
       ));
     }

@@ -1,11 +1,13 @@
 /* Blog: listing, article page SEO, admin editor + live SEO checker */
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const mk = async (page, { q = '', ls = {}, admin = false } = {}) => {
   const vc = new VirtualConsole();
   vc.on('jsdomError', e => { const m = String(e.message || e); if (!/not implemented|Could not load/i.test(m)) { fail++; console.log('PAGE-ERR: ' + m.slice(0, 130)); process.exitCode = 1; } });

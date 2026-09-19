@@ -1,11 +1,13 @@
 /* Persona journey: husband buys anniversary surprise for his wife */
 import fs from 'fs';
 import pkg from 'jsdom';
+import { fileURLToPath } from 'node:url';
+const PUB = fileURLToPath(new URL('../public', import.meta.url));
 const { JSDOM, VirtualConsole } = pkg;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let pass = 0, fail = 0;
 const A = (n, c) => { console.log((c ? 'PASS' : 'FAIL') + ' | ' + n); c ? pass++ : (fail++, process.exitCode = 1); };
-const rd = p => fs.readFileSync('/home/user/rose-by-marry/public/' + p, 'utf8');
+const rd = p => fs.readFileSync(PUB + '/' + p, 'utf8');
 const PRODS = [
   { id: 'royal', cat: 'bouq', type: 'bouquet', qty: 20, ar: 'القلب الملكي', fr: 'Coeur Royal', en: 'Royal Heart', price: 180, old: 0, badge: '', featured: true, active: true, occ: ['anniv', 'wed'] },
   { id: 'carre', cat: 'box', type: 'box', qty: 9, ar: 'المربع المخملي', fr: 'Carre Velours', en: 'Velvet Square', price: 150, old: 0, badge: '', featured: false, active: true, occ: ['anniv'] },
