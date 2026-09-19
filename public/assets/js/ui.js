@@ -203,12 +203,47 @@ function giftArt(hex) {
     + '<g transform="translate(150 76) scale(.62)">' + roseMini + '</g>'
     + '</svg>';
 }
-function productArt(p, hex) {
+/* Escapes a value for use inside a double-quoted HTML attribute. The photo
+   URL and alt text end up in innerHTML strings, and alt text is merchant
+   input, so both must be escaped even though sanitizeUrl already ran. */
+function escAttr(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+/* Swatch background: the colour's real close-up photo when uploaded, with the
+   hex kept underneath as the tint that shows while the image loads (and
+   forever, if that colour has no photo yet). */
+function colorDotStyle(c) {
+  const grad = 'linear-gradient(145deg,' + lighten(c.hex, .32) + ',' + c.hex + ' 62%,' + darken(c.hex, .16) + ')';
+  if (c.img) return 'background-image:url(&quot;' + escAttr(encodeURI(c.img)) + '&quot;),' + grad + ';background-size:cover;background-position:center';
+  return 'background:' + grad;
+}
+/* DOM twin of colorDotStyle for el()-built swatches. */
+function colorDotCss(c) {
+  const grad = 'radial-gradient(circle at 35% 30%, ' + lighten(c.hex, .35) + ', ' + c.hex + ' 70%, ' + darken(c.hex, .18) + ')';
+  return c.img
+    ? { backgroundImage: 'url("' + encodeURI(c.img) + '"),' + grad, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : { background: grad };
+}
+/* The hand-drawn SVG mockups. Kept as the fallback for any pack that has no
+   real photo yet, so a partly-photographed catalogue never shows a hole. */
+function productMockup(p, hex) {
   const c = hex || '#C8102E';
   if (p.type === 'box') return boxArt(c, p.qty);
   if (p.type === 'single') return singleArt(c);
   if (p.type === 'gift') return giftArt(c);
   return bouquetArt(c, p.qty || 9, true);
+}
+/* Real photo when one exists for this pack (optionally for this colour),
+   otherwise the mockup. `colorId` is optional: callers that only know a hex
+   (the little colour dots) still get the pack's general photo. */
+function productArt(p, hex, colorId) {
+  const im = (typeof prodImg === 'function') ? prodImg(p, colorId || '') : null;
+  if (im && im.url) {
+    return '<img class="art-photo" src="' + escAttr(im.url) + '" alt="' + escAttr(im.alt || prodName(p)) + '" loading="lazy" decoding="async">';
+  }
+  return productMockup(p, hex);
 }
 
 /* ---------- widgets ---------- */
@@ -300,10 +335,10 @@ function productCard(p) {
   const availColors = S.colors.filter(c => c.available);
   card.innerHTML =
     badgeHTML(p)
-    + '<a class="pc-art" href="' + productUrl(p) + '" aria-label="' + prodName(p) + '">' + productArt(p, (availColors[0] || S.colors[0] || { hex: '#C8102E' }).hex).replace('<svg ', '<svg data-art="1" ') + '</a>'
+    + '<a class="pc-art" href="' + productUrl(p) + '" aria-label="' + prodName(p) + '">' + productArt(p, (availColors[0] || S.colors[0] || { hex: '#C8102E' }).hex, (availColors[0] || S.colors[0] || {}).id).replace('<svg ', '<svg data-art="1" ') + '</a>'
     + (availColors.length > 1
       ? '<div class="pc-dots">' + availColors.map((c, i) =>
-          '<button type="button" class="cdot' + (i === 0 ? ' on' : '') + '" data-cdot="' + c.hex + '" data-pid="' + p.id + '" aria-label="' + colorName(c) + '" title="' + colorName(c) + '" style="background:linear-gradient(145deg,' + lighten(c.hex, .32) + ',' + c.hex + ' 62%,' + darken(c.hex, .16) + ')"></button>'
+          '<button type="button" class="cdot' + (i === 0 ? ' on' : '') + '" data-cdot="' + escAttr(c.hex) + '" data-cid="' + escAttr(c.id) + '" data-pid="' + escAttr(p.id) + '" aria-label="' + escAttr(colorName(c)) + '" title="' + escAttr(colorName(c)) + '" style="' + colorDotStyle(c) + '"></button>'
         ).join('') + '</div>'
       : '')
     + '<div class="pc-body">'
@@ -328,7 +363,7 @@ function bindCardActions(container, colorResolver) {
       const p = prodById(dot.getAttribute('data-pid'));
       if (card && p) {
         const art = card.querySelector('.pc-art');
-        if (art) art.innerHTML = productArt(p, dot.getAttribute('data-cdot')).replace('<svg ', '<svg data-art="1" ');
+        if (art) art.innerHTML = productArt(p, dot.getAttribute('data-cdot'), dot.getAttribute('data-cid')).replace('<svg ', '<svg data-art="1" ');
         $$('.cdot', card).forEach(b => b.classList.toggle('on', b === dot));
       }
       return;

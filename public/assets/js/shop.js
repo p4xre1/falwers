@@ -273,7 +273,7 @@ function initBuilder() {
         type: 'button', disabled: c.available ? null : true,
         onclick: () => { if (c.available) { selB.colorId = c.id; renderColors(); refreshArt(); renderSum(); } }
       },
-        el('span', { class: 'dot', style: { background: 'radial-gradient(circle at 35% 30%, ' + lighten(c.hex, .35) + ', ' + c.hex + ' 70%, ' + darken(c.hex, .18) + ')' } }),
+        el('span', { class: 'dot', style: colorDotCss(c) }),
         el('span', { class: 'nm' }, colorName(c))
       ));
     }
@@ -490,6 +490,28 @@ function pageProduct() {
   const rating = prodRating(p.id);
   const cat = S.categories.find(c => c.id === p.cat);
 
+  /* Thumbnail strip under the main photo. Silent no-op when the pack has no
+     photos (or only one), so mockup-only products look exactly as before. */
+  function pdRenderThumbs(prod, colorId) {
+    const box = $('#pdThumbs');
+    if (!box) return;
+    box.textContent = '';
+    const shots = (typeof prodGallery === 'function') ? prodGallery(prod, colorId || '') : [];
+    if (shots.length < 2) { box.classList.remove('on'); return; }
+    box.classList.add('on');
+    shots.forEach((im, i) => {
+      const b = el('button', {
+        type: 'button', class: 'pd-th' + (i === 0 ? ' on' : ''),
+        'aria-label': im.alt || prodName(prod),
+        onclick: () => {
+          const art = $('#pdArt');
+          if (art) art.innerHTML = '<img class="art-photo" src="' + escAttr(im.url) + '" alt="' + escAttr(im.alt || prodName(prod)) + '" decoding="async">';
+          $$('#pdThumbs .pd-th').forEach(x => x.classList.toggle('on', x === b));
+        }
+      }, el('img', { src: im.url, alt: im.alt || prodName(prod), loading: 'lazy', decoding: 'async' }));
+      box.append(b);
+    });
+  }
   function renderAll() { renderMain(); renderAddons(); renderReviews(); renderRelated(); }
   function renderMain() {
     const c = colorById(st.colorId) || S.colors[0];
@@ -502,7 +524,10 @@ function pageProduct() {
         el('span', { class: 'sep' }, '›'), el('span', {}, prodName(p))
       ),
       el('div', { class: 'pd-grid' },
-        el('div', { class: 'pd-art', id: 'pdArt' }, (() => { const w = el('div'); w.innerHTML = productArt(p, c ? c.hex : '#C8102E'); return w.firstElementChild; })()),
+        el('div', { class: 'pd-media' },
+          el('div', { class: 'pd-art', id: 'pdArt' }, (() => { const w = el('div'); w.innerHTML = productArt(p, c ? c.hex : '#C8102E', c ? c.id : ''); return w.firstElementChild; })()),
+          el('div', { class: 'pd-thumbs', id: 'pdThumbs' })
+        ),
         el('div', { class: 'pd-info' },
           el('span', { class: 'pc-cat' }, cat ? cat.icon + ' ' + catName(cat) : ''),
           el('h1', {}, prodName(p)),
@@ -533,9 +558,9 @@ function pageProduct() {
                 box.append(el('button', {
                   class: 'sw' + (st.colorId === cc.id ? ' sel' : '') + (cc.available ? '' : ' off'),
                   type: 'button', disabled: cc.available ? null : true,
-                  onclick: () => { if (!cc.available) return; st.colorId = cc.id; const art = $('#pdArt'); art.innerHTML = productArt(p, cc.hex); $$('#pdColors .sw').forEach(b => b.classList.toggle('sel', b === arguments[0])); renderColorsSel(cc.id); }
+                  onclick: () => { if (!cc.available) return; st.colorId = cc.id; const art = $('#pdArt'); art.innerHTML = productArt(p, cc.hex, cc.id); pdRenderThumbs(p, cc.id); $$('#pdColors .sw').forEach(b => b.classList.toggle('sel', b === arguments[0])); renderColorsSel(cc.id); }
                 },
-                  el('span', { class: 'dot', style: { background: 'radial-gradient(circle at 35% 30%, ' + lighten(cc.hex, .35) + ', ' + cc.hex + ' 70%, ' + darken(cc.hex, .18) + ')' } }),
+                  el('span', { class: 'dot', style: colorDotCss(cc) }),
                   el('span', { class: 'nm' }, colorName(cc))
                 ));
               }
@@ -621,6 +646,7 @@ function pageProduct() {
         + '💰 *المبلغ الإجمالي:* ' + money((p.price + addons.reduce((s, a) => s + a.price, 0)) * st.qty) + '\n' + L2;
       openWa(msg);
     });
+    pdRenderThumbs(p, st.colorId);
   }
   function renderColorsSel(id) { $$('#pdColors .sw').forEach((b, i) => b.classList.toggle('sel', S.colors[i] && S.colors[i].id === id)); }
   function renderAddons() {
@@ -727,7 +753,7 @@ function pageCart() {
       const p = it.custom ? null : prodById(it.pid);
       const c = it.colorId ? colorById(it.colorId) : null;
       const name = it.custom ? t('base_lbl') + ' — ' + it.custom.qty + ' ' + t('units') : (p ? prodName(p) : '—');
-      const artHTML = it.custom ? bouquetArt(c ? c.hex : '#C8102E', it.custom.qty, true) : (p ? productArt(p, c ? c.hex : '#C8102E') : '');
+      const artHTML = it.custom ? bouquetArt(c ? c.hex : '#C8102E', it.custom.qty, true) : (p ? productArt(p, c ? c.hex : '#C8102E', c ? c.id : '') : '');
       const extras = (it.addons || []).map(aid => { const a = addonById(aid); return a ? addonName(a) : ''; }).filter(Boolean).join('، ');
       const line = el('div', { class: 'cartline' },
         el('div', { class: 'cl-art' }, (() => { const w = el('div'); w.innerHTML = artHTML; return w.firstElementChild || w; })()),
@@ -813,7 +839,7 @@ function pageCart() {
       xs.forEach(x => {
         const chip = el('div', { class: 'xs-chip' });
         const aw = el('span', { class: 'xs-art' });
-        aw.innerHTML = productArt(x, xc ? xc.hex : '#C8102E');
+        aw.innerHTML = productArt(x, xc ? xc.hex : '#C8102E', xc ? xc.id : '');
         const ab = el('button', { class: 'xs-add', type: 'button', 'aria-label': t('add_cart_s') }, '+');
         ab.addEventListener('click', () => { CART.add({ key: uid(), pid: x.id, colorId: xc ? xc.id : null, qty: 1, addons: [], note: '' }); updateBadges(); toast(t('added_to_cart'), 'ok'); render(); });
         chip.append(aw, el('span', { class: 'xs-name' }, prodName(x), el('small', {}, money(x.price))), ab);

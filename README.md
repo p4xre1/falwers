@@ -41,8 +41,20 @@ wrangler.toml       Cloudflare Pages config (deploys public/)
 │   ├── generate-llms-enhanced.mjs   llms.txt + llms-full.txt + ai.txt
 │   ├── optimize-ai-seo.mjs          robots + sitemaps + geo/JSON-LD injection + audit
 │   └── load-catalog.mjs             vm-loads the live catalog from data.js
-├── supabase/           OPTIONAL future backend (config, schema, docs)
+├── supabase/           OPTIONAL backend — real product/colour photos
+│   ├── migrations/0001_init.sql     catalog + orders + reviews schema
+│   └── migrations/0002_media.sql    photo storage (see supabase/README.md)
 └── .vscode/            Editor settings + recommended extensions```
+
+## 📸 Real photos instead of mockups
+
+Packs and colours ship as hand-drawn SVG mockups. To use real photography, paste
+`supabase/migrations/0002_media.sql` into the Supabase SQL editor, then connect the
+project in **Admin → Settings → Supabase**. Upload photos per pack, and optionally per
+pack **+ colour**, in Admin → Products; upload colour close-ups in Admin → Colours.
+
+Anything without a photo keeps its mockup, so you can photograph the catalogue one item
+at a time. Full details and the resolution order: [`supabase/README.md`](supabase/README.md).
 
 ## 🤖 AI / SEO tooling (no dependencies)
 

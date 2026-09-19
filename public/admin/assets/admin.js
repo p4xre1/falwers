@@ -380,6 +380,145 @@ function pageReviews() {
 /* ============================================================
    PAGE: colors (add / edit / remove flower colors)
    ============================================================ */
+/* ============================================================
+   PHOTOS — shared by the colours and products pages
+   ------------------------------------------------------------
+   Two storage modes, chosen automatically:
+     * Supabase configured + signed in -> the file is uploaded to the `media`
+       bucket, the row goes to product_images/color_images, and we keep the
+       public CDN URL.
+     * Otherwise -> the image is inlined as a data: URL in local state. That
+       keeps the feature usable offline today, but it inflates the backup file,
+       so the UI says so.
+   ============================================================ */
+const PHOTO_MAX = 5 * 1024 * 1024;
+
+function photoModeNote() {
+  if (typeof SB === 'undefined' || !SB.on()) return t('ph_mode_local');
+  return SB.authed ? t('ph_mode_cloud') : t('ph_mode_needlogin');
+}
+/* Reads a File into a data: URL (local mode / instant preview). */
+function fileToDataUrl(file) {
+  return new Promise((res, rej) => {
+    const rd = new FileReader();
+    rd.onload = () => res(String(rd.result));
+    rd.onerror = () => rej(new Error('read'));
+    rd.readAsDataURL(file);
+  });
+}
+/* Uploads to Supabase when possible, else returns a data: URL. */
+async function storePhoto(file, keyPath) {
+  if (!file) throw new Error('nofile');
+  if (!/^image\//.test(file.type)) throw new Error(t('ph_err_type'));
+  if (file.size > PHOTO_MAX) throw new Error(t('ph_err_size'));
+  if (typeof SB !== 'undefined' && SB.on() && SB.authed) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5);
+    const path = keyPath + '-' + Date.now().toString(36) + '.' + (ext || 'jpg');
+    await SB.upload(file, path);
+    return { url: SB.publicUrl(path), path };
+  }
+  return { url: await fileToDataUrl(file), path: '' };
+}
+/* Hidden <input type=file> + button, returns the button element. */
+function photoPickBtn(label, onPick) {
+  const inp = el('input', { type: 'file', accept: 'image/*', class: 'hidden' });
+  const btn = el('button', { class: 'btn btn-outline btn-sm', type: 'button', onclick: () => inp.click() }, label);
+  inp.addEventListener('change', async () => {
+    const f = inp.files && inp.files[0];
+    inp.value = '';
+    if (!f) return;
+    try { await onPick(f); } catch (e) { toast(String(e.message || e).slice(0, 120), 'err'); }
+  });
+  const w = el('span', { style: { display: 'inline-flex', gap: '6px', alignItems: 'center' } }, btn, inp);
+  return w;
+}
+/* One colour's photo row. */
+function colorPhotoRow(c, rerender) {
+  const wrap = el('div', { class: 'ph-grid', style: { alignItems: 'flex-start', marginBottom: '14px' } });
+  if (c.img) {
+    const item = el('div', { class: 'ph-item is-primary' },
+      el('img', { src: c.img, alt: colorName(c) }),
+      el('div', { class: 'ph-bar' }, el('button', { type: 'button', onclick: async () => {
+        if (!(await confirmDlg(t('ph_del_q')))) return;
+        c.img = ''; saveAndRefresh(); rerender();
+        if (typeof SB !== 'undefined' && SB.on() && SB.authed) SB.delColorImage(c.id).catch(() => {});
+      } }, t('ph_del'))));
+    wrap.append(item);
+  } else {
+    wrap.append(el('span', { class: 'ph-empty' }, t('ph_none_color')));
+  }
+  wrap.append(photoPickBtn(c.img ? t('ph_replace') : t('ph_add'), async f => {
+    const r = await storePhoto(f, 'colors/' + (c.id || 'color'));
+    c.img = r.url;
+    saveAndRefresh(); rerender();
+    if (r.path && typeof SB !== 'undefined' && SB.on() && SB.authed) {
+      SB.setColorImage({ color_id: c.id, path: r.path, alt_ar: c.ar, alt_fr: c.fr, alt_en: c.en }).catch(e => toast(String(e.message).slice(0, 120), 'err'));
+    }
+    toast(t('toast_saved'), 'ok');
+  }));
+  wrap.append(el('span', { class: 'hintline', style: { flexBasis: '100%' } }, photoModeNote()));
+  return wrap;
+}
+
+/* One pack's gallery. `slot` is '' for general shots, or a colour id for
+   "this pack in that colour". Mirrors product_images in 0002_media.sql. */
+function productPhotoBox(p, rerender) {
+  const box = el('div', { class: 'ph-wrap', style: { gridColumn: '1/-1', padding: '4px 0 14px' } });
+  const sel = el('select', { style: { maxWidth: '190px' } });
+  sel.append(el('option', { value: '' }, t('ph_slot_all')));
+  for (const c of S.colors) { const o = el('option', { value: c.id }, colorName(c)); if (p.__slot === c.id) o.selected = true; sel.append(o); }
+  sel.addEventListener('change', () => { p.__slot = sel.value; rerender(); });
+  const slot = p.__slot || '';
+
+  const grid = el('div', { class: 'ph-grid' });
+  const shots = (p.imgs || []).filter(im => (im.colorId || '') === slot);
+  if (!shots.length) grid.append(el('span', { class: 'ph-empty' }, t('ph_none_prod')));
+  for (const im of shots) {
+    const item = el('div', { class: 'ph-item' + (im.primary ? ' is-primary' : '') },
+      el('img', { src: im.url, alt: im.alt || prodName(p) }),
+      im.primary ? el('span', { class: 'ph-tag' }, t('ph_main')) : el('span'),
+      el('div', { class: 'ph-bar' },
+        im.primary ? el('span') : el('button', { type: 'button', title: t('ph_make_main'), onclick: () => {
+          p.imgs.forEach(o => { if ((o.colorId || '') === slot) o.primary = (o === im); });
+          saveAndRefresh(); rerender();
+          if (typeof SB !== 'undefined' && SB.on() && SB.authed && im.id) SB.makePrimary(im.id).catch(() => {});
+        } }, '★'),
+        el('button', { type: 'button', title: t('ph_del'), onclick: async () => {
+          if (!(await confirmDlg(t('ph_del_q')))) return;
+          const wasPrimary = im.primary;
+          p.imgs = p.imgs.filter(o => o !== im);
+          /* keep the DB rule locally: a slot always keeps one primary */
+          if (wasPrimary) { const next = p.imgs.find(o => (o.colorId || '') === slot); if (next) next.primary = true; }
+          saveAndRefresh(); rerender();
+          if (typeof SB !== 'undefined' && SB.on() && SB.authed && im.id) SB.delProductImage(im.id).catch(() => {});
+        } }, '✕')));
+    grid.append(item);
+  }
+
+  grid.append(photoPickBtn(t('ph_add'), async f => {
+    const r = await storePhoto(f, 'products/' + p.id + (slot ? '/' + slot : ''));
+    p.imgs = p.imgs || [];
+    const first = !p.imgs.some(o => (o.colorId || '') === slot);
+    const row = { id: uid(), url: r.url, colorId: slot, alt: prodName(p), primary: first };
+    p.imgs.push(row);
+    saveAndRefresh(); rerender();
+    if (r.path && typeof SB !== 'undefined' && SB.on() && SB.authed) {
+      SB.addProductImage({ product_id: p.id, color_id: slot || null, path: r.path, alt_ar: p.ar, alt_fr: p.fr, alt_en: p.en, is_primary: first })
+        .then(res => { const got = Array.isArray(res) ? res[0] : res; if (got && got.id) row.id = got.id; saveState(); })
+        .catch(e => toast(String(e.message).slice(0, 120), 'err'));
+    }
+    toast(t('toast_saved'), 'ok');
+  }));
+
+  box.append(
+    el('div', { style: { display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' } },
+      el('span', { class: 'set-sub', style: { margin: '0' } }, t('ph_for') + ' ' + prodName(p)),
+      sel,
+      el('span', { class: 'hintline' }, slot ? t('ph_slot_hint_color') : t('ph_slot_hint_all'))),
+    grid);
+  return box;
+}
+
 function pageColors() {
   function render() {
     const box = $('#colorsList');
@@ -406,6 +545,9 @@ function pageColors() {
         cIn, hexT, ar, fr, en,
         checkbox('th_avail', () => c.available, v => { c.available = v; }),
         delBtn(t('del_color'), () => { S.colors = S.colors.filter(x => x.id !== c.id); saveAndRefresh(); render(); })));
+      /* real close-up photo for this colour — replaces the flat hex dot on the
+         storefront once uploaded; the hex stays as the loading tint */
+      box.append(colorPhotoRow(c, render));
     }
     if (!S.colors.length) box.append(el('p', { class: 'empty' }, lang === 'fr' ? 'Aucune couleur — ajoutez-en une.' : lang === 'en' ? 'No colors — add one.' : 'لا توجد ألوان — أضف واحداً.'));
   }
@@ -482,6 +624,7 @@ function pageProducts() {
         prev, catSel, typeSel, ar, desc, qty, price, old, badgeSel,
         (() => { const w = el('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap' } }); w.append(checkbox('th_feat', () => p.featured, v => { p.featured = v; }), checkbox('th_act', () => p.active, v => { p.active = v; })); return w; })(),
         delBtn(t('del_prod'), () => { S.products = S.products.filter(x => x.id !== p.id); saveAndRefresh(); renderAll(); })));
+      box.append(productPhotoBox(p, renderProducts));
     }
     if (!box.children.length) box.append(el('p', { class: 'empty' }, t('no_data')));
   }
@@ -733,6 +876,48 @@ function pageSettings() {
     setTimeout(() => location.reload(), 600);
   });
   $$('[data-copy]').forEach(b => b.addEventListener('click', () => { const ta = $('#' + b.dataset.copy); if (ta) copyText(ta.value); }));
+
+  /* ---------- Supabase panel ---------- */
+  (function supabasePanel() {
+    if (typeof SB === 'undefined' || !$('#sb_url')) return;
+    SB.restore();
+    const cfg = () => S.settings.supabase || (S.settings.supabase = { url: '', anonKey: '', bucket: 'media' });
+    $('#sb_url').value = cfg().url || '';
+    $('#sb_key').value = cfg().anonKey || '';
+    $('#sb_bucket').value = cfg().bucket || 'media';
+    function paint() {
+      const st = $('#sbStatus');
+      if (!st) return;
+      const on = SB.on();
+      st.className = 'seo-row ' + (on ? 'ok' : 'bad');
+      st.textContent = !on ? t('sb_off') : (SB.authed ? t('sb_on') + ' · ' + t('sb_authed') : t('sb_on') + ' · ' + t('sb_anon'));
+    }
+    paint();
+    $('#sbSave').addEventListener('click', () => {
+      const c = cfg();
+      c.url = sanitize($('#sb_url').value, 200).replace(/\/+$/, '');
+      c.anonKey = sanitize($('#sb_key').value, 400);
+      c.bucket = sanitize($('#sb_bucket').value, 60) || 'media';
+      saveState(); paint();
+      toast(t('toast_saved'), 'ok');
+    });
+    $('#sbLogin').addEventListener('click', async () => {
+      try {
+        await SB.signIn($('#sb_email').value.trim(), $('#sb_pass').value);
+        $('#sb_pass').value = '';
+        paint(); toast(t('toast_saved'), 'ok');
+      } catch (e) { toast(String(e.message || e).slice(0, 140), 'err'); }
+    });
+    $('#sbLogout').addEventListener('click', () => { SB.signOut(); paint(); });
+    $('#sbPull').addEventListener('click', async () => {
+      try {
+        const r = await SB.pullPhotos();
+        if (!r.ok) { toast(t('sb_off'), 'err'); return; }
+        toast(t('sb_pulled') + ' (' + r.count + ')', 'ok');
+      } catch (e) { toast(String(e.message || e).slice(0, 140), 'err'); }
+    });
+  })();
+
   window.RBM_RERENDER = renderSeo;
 }
 
